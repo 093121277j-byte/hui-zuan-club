@@ -443,9 +443,9 @@ body {
     color:
         rgba(245,249,255,.90);
 
-    font-size: 10px;
+    font-size: 14px;
 
-    font-weight: 400;
+    font-weight: 500;
 
     letter-spacing: 4px;
 
@@ -556,7 +556,7 @@ body {
 ========================================================= */
 
 .member-shayi .name-text {
-    font-size: 12px;
+    font-size: 17px;
 
     font-weight: 600;
 
@@ -4285,6 +4285,87 @@ updateDisplay(
 </script>
 
 
+
+
+<!-- =========================================================
+     投屏满版适配补丁
+     设计基准：1920 × 1080（16:9）
+     使用 cover 方式铺满浏览器画面，避免左右黑边；
+     极端比例下会轻微裁切边缘，不会把人物拉胖。
+========================================================= -->
+<style id="projection-cover-patch">
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #05070a;
+}
+body {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 1920px !important;
+    height: 1080px !important;
+    min-width: 1920px !important;
+    min-height: 1080px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    transform-origin: center center !important;
+}
+
+/* ===== 待机主持姓名：30px 直式 ===== */
+.waiting .name-text {
+    font-size: 30px !important;
+    font-weight: 600 !important;
+    letter-spacing: 2px !important;
+    line-height: 1.05 !important;
+    writing-mode: vertical-rl !important;
+    text-orientation: upright !important;
+    white-space: nowrap !important;
+    padding: 0 0 12px !important;
+}
+.waiting .name-text::before {
+    display: block !important;
+    margin: 0 0 8px 0 !important;
+    font-size: 12px !important;
+}
+.waiting .member-shayi .name-text {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+}
+.waiting .member-name {
+    align-items: center !important;
+}
+
+/* 鲨熠待机名字微调：下移避免顶部裁切 */
+.member-shayi .member-name {
+    transform: translateX(-50%) translateY(-18px) !important;
+}
+</style>
+<script>
+(function () {
+    function fitProjectionCover() {
+        var baseW = 1920;
+        var baseH = 1080;
+        var vw = window.innerWidth || document.documentElement.clientWidth;
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+
+        // cover：完整铺满窗口，不留左右/上下黑边。
+        var scale = Math.max(vw / baseW, vh / baseH);
+        document.body.style.transform =
+            'translate(-50%, -50%) scale(' + scale + ')';
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fitProjectionCover);
+    } else {
+        fitProjectionCover();
+    }
+    window.addEventListener('resize', fitProjectionCover);
+})();
+</script>
 </body>
 
 </html>
