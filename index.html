@@ -2470,6 +2470,22 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .audition-info{position:absolute;right:10%;top:42%;width:36%;transform:translateY(-50%);text-align:center}.audition-diamond{width:54px;height:54px;margin:0 auto 28px;transform:rotate(45deg);border:1px solid rgba(245,250,255,.75);box-shadow:0 0 35px rgba(225,240,255,.28),inset 0 0 20px rgba(255,255,255,.10)}
 .audition-name{font-size:42px;letter-spacing:12px;text-shadow:0 0 24px rgba(235,245,255,.35)}.audition-status{margin-top:20px;font-size:12px;letter-spacing:5px;opacity:.52}.audition-wave{margin:30px auto 0;width:220px;height:42px;display:flex;align-items:center;justify-content:center;gap:6px}.audition-wave i{display:block;width:2px;height:12px;background:rgba(245,250,255,.65);animation:auditionWave .8s ease-in-out infinite alternate}.audition-wave i:nth-child(2){animation-delay:.15s}.audition-wave i:nth-child(3){animation-delay:.3s}.audition-wave i:nth-child(4){animation-delay:.45s}.audition-wave i:nth-child(5){animation-delay:.6s}@keyframes auditionWave{to{height:38px;opacity:1}}
 
+
+
+/* =========================================================
+   本曲谢榜 + 今日谢榜
+========================================================= */
+.settlement-screen{position:fixed;inset:0;z-index:880;display:none;padding:7vh 7vw 6vh;overflow:auto;color:#fff;background:radial-gradient(circle at 50% 25%,rgba(115,145,190,.18),transparent 32%),linear-gradient(145deg,#121823,#070a0f 58%,#020304)}
+.settlement-screen.show{display:block}.settlement-head{text-align:center;margin-bottom:34px}.settlement-en{font-size:12px;letter-spacing:8px;opacity:.42}.settlement-title{margin-top:12px;font-size:32px;letter-spacing:10px}.settlement-sub{margin-top:10px;font-size:12px;letter-spacing:4px;opacity:.5}
+.settlement-card{max-width:1120px;margin:0 auto;padding:28px 32px;border-radius:22px;border:1px solid rgba(235,245,255,.14);background:rgba(255,255,255,.035);box-shadow:0 24px 90px rgba(0,0,0,.38)}
+.songend-top{display:grid;grid-template-columns:210px 1fr;gap:34px;align-items:center}.songend-img{width:210px;height:280px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 28px rgba(225,238,255,.22))}
+.songend-singer{font-size:30px;letter-spacing:7px}.songend-song{margin-top:12px;font-size:22px}.songend-meta{margin-top:10px;font-size:13px;opacity:.55;letter-spacing:2px}.songend-heart{margin-top:20px;font-size:42px}
+.settle-section{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}.settle-section-title{font-size:11px;letter-spacing:5px;opacity:.42;margin-bottom:12px}
+.contrib-row,.giver-row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:14px}
+.stats-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}.stats-number{padding:18px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.stats-number strong{display:block;font-size:30px}.stats-number span{display:block;margin-top:6px;font-size:10px;letter-spacing:3px;opacity:.4}
+.stats-song-list{display:grid;gap:10px}.stats-song{display:grid;grid-template-columns:90px minmax(180px,1fr) 170px 120px;gap:16px;align-items:center;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.022)}
+.stats-song-singer{font-weight:600;letter-spacing:2px}.stats-song-name{font-size:15px}.stats-song-requester{font-size:11px;opacity:.5}.stats-song-heart{text-align:right;font-size:17px}.empty-settle{text-align:center;padding:28px;opacity:.35}
+
 </style>
 
 </head>
@@ -3084,6 +3100,14 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 </div>
 
 
+
+
+<!-- 本曲谢榜 -->
+<div class="settlement-screen" id="songEndScreen"><div class="settlement-head"><div class="settlement-en">HUI ZUAN CLUB · SONG SETTLEMENT</div><div class="settlement-title">本曲谢榜</div><div class="settlement-sub">THANK YOU FOR YOUR SUPPORT</div></div><div class="settlement-card" id="songEndContent"></div></div>
+
+<!-- 今日谢榜 -->
+<div class="settlement-screen" id="statsScreen"><div class="settlement-head"><div class="settlement-en">HUI ZUAN CLUB · DAILY REPORT</div><div class="settlement-title">今日谢榜</div><div class="settlement-sub" id="statsDate">TODAY</div></div><div class="settlement-card" id="statsContent"></div></div>
+
 <!-- =========================================================
      Footer
 ========================================================= -->
@@ -3526,6 +3550,25 @@ function playAuditionAudio(data){
   auditionAudio.play().then(()=>{document.getElementById("auditionStatus").innerText="正在试听";}).catch(()=>{document.getElementById("auditionStatus").innerText="请先点击开启投屏";});
 }
 
+
+
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));}
+function hideSettlementScreens(){document.getElementById("songEndScreen").classList.remove("show");document.getElementById("statsScreen").classList.remove("show");}
+function renderSongEnd(data){
+ const r=data.finalRecord||data, entries=Object.entries(r.contributions||{}).sort((a,b)=>Number(b[1])-Number(a[1]));
+ const rows=entries.length?entries.map(([n,v])=>`<div class="contrib-row"><span>${escapeHtml(n)}</span><strong>♡ ${Number(v||0).toLocaleString()}</strong></div>`).join(""):`<div class="empty-settle">本曲暂无礼物记录</div>`;
+ document.getElementById("songEndContent").innerHTML=`<div class="songend-top"><img class="songend-img" src="${escapeHtml(r.character||"images/shayi.png")}" alt="演唱者"><div><div class="songend-singer">${escapeHtml(r.singer||"—")}</div><div class="songend-song">《${escapeHtml(r.song||"—")}》</div><div class="songend-meta">点歌人 · ${escapeHtml(r.requester||"—")}</div><div class="songend-heart">♡ ${Number(r.heart||0).toLocaleString()}</div></div></div><div class="settle-section"><div class="settle-section-title">本曲贡献谢榜 · THANKS</div>${rows}</div>`;
+ document.getElementById("songEndScreen").classList.add("show");
+}
+function renderStats(data){
+ const records=Array.isArray(data.records)?data.records:[];
+ const songs=records.length?records.map((r,i)=>`<div class="stats-song"><div class="stats-song-singer">${escapeHtml(r.singer||"—")}</div><div><div class="stats-song-name">${String(i+1).padStart(2,"0")} · 《${escapeHtml(r.song||"—")}》</div><div class="stats-song-requester">点歌人 · ${escapeHtml(r.requester||"—")}</div></div><div class="stats-song-requester">${escapeHtml(r.startedAt||"")}${r.endedAt?" - "+escapeHtml(r.endedAt):""}</div><div class="stats-song-heart">♡ ${Number(r.heart||0).toLocaleString()}</div></div>`).join(""):`<div class="empty-settle">今天还没有完成的歌曲记录</div>`;
+ const givers=Array.isArray(data.giverStats)&&data.giverStats.length?data.giverStats.map((g,i)=>`<div class="giver-row"><span>${i+1}. ${escapeHtml(g.name)}</span><strong>♡ ${Number(g.value||0).toLocaleString()}</strong></div>`).join(""):`<div class="empty-settle">今日暂无贡献记录</div>`;
+ document.getElementById("statsDate").innerText=data.date||"TODAY";
+ document.getElementById("statsContent").innerHTML=`<div class="stats-summary"><div class="stats-number"><strong>${Number(data.totalSongs??records.length).toLocaleString()}</strong><span>今日完成歌曲</span></div><div class="stats-number"><strong>♡ ${Number(data.totalHeart||0).toLocaleString()}</strong><span>今日总心动值</span></div></div><div class="settle-section"><div class="settle-section-title">今日全部演唱歌曲 · ALL SONGS</div><div class="stats-song-list">${songs}</div></div><div class="settle-section"><div class="settle-section-title">今日总贡献 · SUPPORT RANKING</div>${givers}</div>`;
+ document.getElementById("statsScreen").classList.add("show");
+}
+
 function updateDisplay(
     initial = false
 ) {
@@ -3563,6 +3606,28 @@ function updateDisplay(
     }
     auditionEl.classList.remove("show");
     if(lastMode === "audition") stopAuditionAudio();
+
+    hideSettlementScreens();
+
+    /* 本曲谢榜 */
+    if (mode === "songEnd") {
+        document.getElementById("waiting").classList.add("hide");
+        document.getElementById("performance").classList.remove("show");
+        renderSongEnd(data);
+        lastMode = "songEnd";
+        lastLevel = null;
+        return;
+    }
+
+    /* 今日谢榜 */
+    if (mode === "stats") {
+        document.getElementById("waiting").classList.add("hide");
+        document.getElementById("performance").classList.remove("show");
+        renderStats(data);
+        lastMode = "stats";
+        lastLevel = null;
+        return;
+    }
 
 
     /* =====================================================
