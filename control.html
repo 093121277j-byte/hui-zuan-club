@@ -365,6 +365,31 @@ input:focus {
 
 <body>
 
+<div id="hzAccessGate" style="position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center,#293447 0%,#0d1119 56%,#040507 100%);font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;color:#fff">
+<div style="width:min(420px,86vw);text-align:center;padding:48px 34px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.035);box-shadow:0 0 60px rgba(210,230,255,.08)">
+<div style="font-size:25px;letter-spacing:9px">HUI ZUAN</div>
+<div style="margin-top:9px;font-size:9px;letter-spacing:6px;opacity:.42">CONTROL ACCESS</div>
+<input id="hzAccessPassword" type="password" placeholder="请输入访问密码" style="width:100%;margin-top:32px;padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);outline:none;background:rgba(255,255,255,.06);color:#fff;text-align:center;font-size:16px;letter-spacing:3px">
+<button id="hzAccessButton" type="button" style="width:100%;margin-top:13px;padding:13px;border-radius:10px;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.09);color:#fff;cursor:pointer;letter-spacing:4px">进入控制台</button>
+<div id="hzAccessError" style="height:20px;margin-top:12px;font-size:11px;color:#ffb9b9"></div>
+</div></div>
+<script>
+(function(){
+ const KEY="huizuanControlAccess", PASS="hz0911";
+ const gate=document.getElementById("hzAccessGate"), input=document.getElementById("hzAccessPassword"),
+ btn=document.getElementById("hzAccessButton"), err=document.getElementById("hzAccessError");
+ function unlock(){
+   if(input.value===PASS){sessionStorage.setItem(KEY,"ok");gate.style.display="none";input.value="";err.textContent="";}
+   else{err.textContent="密码错误";input.select();}
+ }
+ if(sessionStorage.getItem(KEY)==="ok") gate.style.display="none";
+ else setTimeout(()=>input.focus(),0);
+ btn.addEventListener("click",unlock);
+ input.addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+})();
+</script>
+
+
 <div class="wrapper">
 
     <div class="logo">
