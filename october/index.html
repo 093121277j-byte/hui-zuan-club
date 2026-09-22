@@ -617,9 +617,9 @@ body {
 /* =========================================================
    12 十四人站位
 
-   空白 泽攸 青決 防 鲨熠 弋阳
-                    雾
-   祈年 艾 北北 宸御 辣椒油 遇见
+   遇见 空白 泽攸 青決 弋阳 防 雾
+                    鲨熠
+   祈年 艾 宸御 北北 辣椒油 
 ========================================================= */
 
 
@@ -890,6 +890,22 @@ body {
 }
 
 
+/* 14  */
+
+.member-qibaiwan {
+    left: 89%;
+
+    width: 10.5%;
+
+    height: 50%;
+
+    z-index: 15;
+
+    animation-delay:
+        -1s;
+}
+
+
 /* =========================================================
    13 姓名错层
 
@@ -920,7 +936,13 @@ body {
 .member-qingjue .member-name,
 .member-fang .member-name,
 .member-ai .member-name,
-.member-beibei .member-name,
+.member-beibei .member-name {
+
+    transform:
+        translateX(-50%)
+        translateY(8px);
+}
+
 
 /* C位最高 */
 
@@ -1603,7 +1625,7 @@ body {
 .requester {
     margin-top: 30px;
 
-    font-size: 15px;
+    font-size: 20px;
 
     opacity: .52;
 }
@@ -2434,7 +2456,7 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .waiting .member-zeyou img { animation-duration:4.8s; animation-delay:-3.7s; }
 .waiting .member-lajiaoyou img { animation-duration:5.5s; animation-delay:-2.4s; }
 .waiting .member-kongbai img { animation-duration:5.1s; animation-delay:-.9s; }
-
+.waiting .member-qibaiwan img { animation-duration:4.9s; animation-delay:-3.3s; }
 .waiting .member-feiye img { animation-duration:5.7s; animation-delay:-1.5s; }
 @keyframes hzWaitingBreath { 0%,100%{transform:translateY(0) rotate(0deg) scale(1)} 50%{transform:translateY(-9px) rotate(.12deg) scale(1.006)} }
 
@@ -2458,10 +2480,10 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .songend-top{display:grid;grid-template-columns:210px 1fr;gap:34px;align-items:center}.songend-img{width:210px;height:280px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 28px rgba(225,238,255,.22))}
 .songend-singer{font-size:30px;letter-spacing:7px}.songend-song{margin-top:12px;font-size:22px}.songend-meta{margin-top:10px;font-size:13px;opacity:.55;letter-spacing:2px}.songend-heart{margin-top:20px;font-size:42px}
 .settle-section{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}.settle-section-title{font-size:11px;letter-spacing:5px;opacity:.42;margin-bottom:12px}
-.contrib-row,.giver-row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:14px}
+.contrib-row,.giver-row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:20px}
 .stats-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}.stats-number{padding:18px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.stats-number strong{display:block;font-size:30px}.stats-number span{display:block;margin-top:6px;font-size:10px;letter-spacing:3px;opacity:.4}
 .stats-song-list{display:grid;gap:10px}.stats-song{display:grid;grid-template-columns:90px minmax(180px,1fr) 170px 120px;gap:16px;align-items:center;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.022)}
-.stats-song-singer{font-weight:600;letter-spacing:2px}.stats-song-name{font-size:15px}.stats-song-requester{font-size:11px;opacity:.5}.stats-song-heart{text-align:right;font-size:17px}.empty-settle{text-align:center;padding:28px;opacity:.35}
+.stats-song-singer{font-weight:600;letter-spacing:2px}.stats-song-name{font-size:15px}.stats-song-requester{font-size:15px;opacity:.5}.stats-song-heart{text-align:right;font-size:17px}.empty-settle{text-align:center;padding:28px;opacity:.35}
 
 
 
@@ -2482,7 +2504,41 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .member-jinxun { left: 65.4%; }
 .member-beibei { left: 71.6%; }
 .member-lajiaoyou { left: 78.0%; }
+.member-qibaiwan { left: 85.0%; }
 
+</style>
+
+
+<style id="october-13-host-layout">
+/* October: 13 hosts, 雾 is the unique C position. Legacy class names are intentionally preserved. */
+.member-kongbai   { left: 3.0% !important;  width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
+.member-zeyou     { left: 9.5% !important;  width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
+.member-qingjue   { left: 16.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
+.member-fang      { left: 23.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
+.member-shayi     { left: 30.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
+.member-yiyang    { left: 37.0% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
+.member-wu        { left: 44.0% !important; width: 15.0% !important; height: 87% !important; z-index: 60 !important; }
+.member-qinian    { left: 53.5% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
+.member-ai        { left: 61.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
+.member-beibei    { left: 68.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
+.member-jinxun    { left: 75.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
+.member-lajiaoyou { left: 82.0% !important; width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
+.member-feiye     { left: 88.0% !important; width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
+
+/* Remove September C styling from 鲨熠, promote 雾. */
+.member-shayi .name-text { font-size:14px !important; font-weight:500 !important; letter-spacing:4px !important; color:rgba(245,249,255,.90) !important; }
+.member-shayi .name-line { height:62px !important; }
+.member-shayi .member-name { transform:translateX(-50%) translateY(-28px) !important; }
+.member-shayi img { filter:brightness(.98) drop-shadow(0 0 28px rgba(225,238,255,.28)) !important; }
+
+.member-wu .name-text { font-size:17px !important; font-weight:600 !important; letter-spacing:5px !important; color:#fff !important; text-shadow:0 0 14px rgba(240,248,255,.85) !important; }
+.member-wu .name-text::before { font-size:9px !important; color:rgba(255,255,255,.92) !important; }
+.member-wu .name-line { height:82px !important; box-shadow:0 0 13px rgba(235,245,255,.52) !important; }
+.member-wu .member-name { transform:translateX(-50%) translateY(-58px) !important; }
+.member-wu img { filter:brightness(1.07) drop-shadow(0 0 48px rgba(235,245,255,.46)) !important; }
+
+/* Ensure removed September 14th host can never render. */
+.member-qibaiwan { display:none !important; }
 </style>
 
 </head>
@@ -2841,6 +2897,12 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
         </div>
 
     </div>
+
+
+    <!-- 14  -->
+
+
+</div>
 
 
 
@@ -4316,56 +4378,6 @@ body {
 .member-shayi .member-name {
     transform: translateX(-50%) translateY(-18px) !important;
 }
-
-/* =========================================================
-   2026-10 十三人新版排位
-   空白｜泽攸｜青決｜防｜鲨熠｜弋阳｜雾｜祈年｜艾｜北北｜宸御｜辣椒油｜遇见
-   C位：雾
-========================================================= */
-
-/* 横向站位 */
-.member-kongbai   { left: 3.0% !important;  width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
-.member-zeyou     { left: 9.5% !important;  width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
-.member-qingjue   { left: 16.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
-.member-fang      { left: 23.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
-.member-shayi     { left: 30.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
-.member-yiyang    { left: 37.0% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
-
-.member-wu        { left: 44.0% !important; width: 15.0% !important; height: 87% !important; z-index: 60 !important; }
-
-.member-qinian    { left: 53.5% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
-.member-ai        { left: 61.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
-.member-beibei    { left: 68.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
-.member-jinxun    { left: 75.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
-.member-lajiaoyou { left: 82.0% !important; width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
-.member-feiye     { left: 88.0% !important; width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
-
-/* 雾升级为唯一 C 位 */
-.waiting .member-wu img {
-    brightness: 1.07;
-    filter: brightness(1.07) drop-shadow(0 0 48px rgba(235,245,255,.46)) !important;
-}
-.waiting .member-wu .name-text {
-    font-size: 30px !important;
-    font-weight: 700 !important;
-    letter-spacing: 2px !important;
-    color: #ffffff !important;
-    text-shadow: 0 0 14px rgba(240,248,255,.85) !important;
-}
-.member-wu .member-name {
-    transform: translateX(-50%) translateY(-18px) !important;
-}
-
-/* 鲨熠恢复为普通核心位，不再使用旧 C 位姓名偏移 */
-.waiting .member-shayi .name-text {
-    font-size: 30px !important;
-    font-weight: 600 !important;
-    letter-spacing: 2px !important;
-}
-.member-shayi .member-name {
-    transform: translateX(-50%) translateY(-28px) !important;
-}
-
 </style>
 <script>
 (function () {
