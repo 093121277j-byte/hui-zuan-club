@@ -2843,6 +2843,7 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
     </div>
 
 
+</div>
 
 <!-- 全麦试音：独立投屏模式 -->
 <div class="audition" id="audition">
@@ -3141,19 +3142,7 @@ function enableStage() {
         "none";
 
 
-    /* 开启投屏后固定先进入全员待机，避免旧模式残留造成黑屏 */
-    hideSettlementScreens();
-
-    const waitingEl = document.getElementById("waiting");
-    const performanceEl = document.getElementById("performance");
-    const auditionEl = document.getElementById("audition");
-
-    if (waitingEl) waitingEl.classList.remove("hide");
-    if (performanceEl) performanceEl.classList.remove("show");
-    if (auditionEl) auditionEl.classList.remove("show");
-
-    lastMode = "waiting";
-    lastLevel = null;
+    updateDisplay(true);
 
 }
 
@@ -4263,8 +4252,9 @@ window.addEventListener(
    第一次载入
 ========================================================= */
 
-/* 首次载入不读取上一次残留模式。
-   开启投屏后先显示全员待机，再由控制台的新操作切换画面。 */
+updateDisplay(
+    true
+);
 
 </script>
 
