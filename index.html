@@ -617,13 +617,13 @@ body {
 /* =========================================================
    12 十四人站位
 
-   王权 空白 泽攸 青诀 弋阳 防 雾
-                    鲨熠
-   祈年 艾 锦洵 北北 辣椒油 七百万
+   空白 泽攸 青诀 防 鲨熠 弋阳
+                    雾
+   祈年 艾 北北 锦洵 辣椒油 遇见
 ========================================================= */
 
 
-/* 01 王权 */
+/* 01 遇见 */
 
 .member-feiye {
     left: -2.5%;
@@ -890,22 +890,6 @@ body {
 }
 
 
-/* 14 七百万 */
-
-.member-qibaiwan {
-    left: 89%;
-
-    width: 10.5%;
-
-    height: 50%;
-
-    z-index: 15;
-
-    animation-delay:
-        -1s;
-}
-
-
 /* =========================================================
    13 姓名错层
 
@@ -937,13 +921,6 @@ body {
 .member-fang .member-name,
 .member-ai .member-name,
 .member-beibei .member-name,
-.member-qibaiwan .member-name {
-
-    transform:
-        translateX(-50%)
-        translateY(8px);
-}
-
 
 /* C位最高 */
 
@@ -2457,7 +2434,7 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .waiting .member-zeyou img { animation-duration:4.8s; animation-delay:-3.7s; }
 .waiting .member-lajiaoyou img { animation-duration:5.5s; animation-delay:-2.4s; }
 .waiting .member-kongbai img { animation-duration:5.1s; animation-delay:-.9s; }
-.waiting .member-qibaiwan img { animation-duration:4.9s; animation-delay:-3.3s; }
+
 .waiting .member-feiye img { animation-duration:5.7s; animation-delay:-1.5s; }
 @keyframes hzWaitingBreath { 0%,100%{transform:translateY(0) rotate(0deg) scale(1)} 50%{transform:translateY(-9px) rotate(.12deg) scale(1.006)} }
 
@@ -2505,7 +2482,6 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .member-jinxun { left: 65.4%; }
 .member-beibei { left: 71.6%; }
 .member-lajiaoyou { left: 78.0%; }
-.member-qibaiwan { left: 85.0%; }
 
 </style>
 
@@ -2594,18 +2570,18 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
     </div>
 
 
-    <!-- 01 王权 -->
+    <!-- 01 遇见 -->
 
     <div class="member member-feiye">
 
         <img
             src="images/feiye.png"
-            alt="王权">
+            alt="遇见">
 
         <div class="member-name">
 
             <span class="name-text">
-                王权
+                遇见
             </span>
 
             <i class="name-line"></i>
@@ -2865,30 +2841,6 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
         </div>
 
     </div>
-
-
-    <!-- 14 七百万 -->
-
-    <div class="member member-qibaiwan">
-
-        <img
-            src="images/qibaiwan.png"
-            alt="七百万">
-
-        <div class="member-name">
-
-            <span class="name-text">
-                七百万
-            </span>
-
-            <i class="name-line"></i>
-
-        </div>
-
-    </div>
-
-
-</div>
 
 
 
@@ -4364,6 +4316,56 @@ body {
 .member-shayi .member-name {
     transform: translateX(-50%) translateY(-18px) !important;
 }
+
+/* =========================================================
+   2026-10 十三人新版排位
+   空白｜泽攸｜青诀｜防｜鲨熠｜弋阳｜雾｜祈年｜艾｜北北｜锦洵｜辣椒油｜遇见
+   C位：雾
+========================================================= */
+
+/* 横向站位 */
+.member-kongbai   { left: 3.0% !important;  width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
+.member-zeyou     { left: 9.5% !important;  width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
+.member-qingjue   { left: 16.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
+.member-fang      { left: 23.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
+.member-shayi     { left: 30.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
+.member-yiyang    { left: 37.0% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
+
+.member-wu        { left: 44.0% !important; width: 15.0% !important; height: 87% !important; z-index: 60 !important; }
+
+.member-qinian    { left: 53.5% !important; width: 12.0% !important; height: 76% !important; z-index: 44 !important; }
+.member-ai        { left: 61.0% !important; width: 12.0% !important; height: 72% !important; z-index: 38 !important; }
+.member-beibei    { left: 68.0% !important; width: 11.5% !important; height: 66% !important; z-index: 26 !important; }
+.member-jinxun    { left: 75.0% !important; width: 11.0% !important; height: 60% !important; z-index: 18 !important; }
+.member-lajiaoyou { left: 82.0% !important; width: 10.5% !important; height: 55% !important; z-index: 14 !important; }
+.member-feiye     { left: 88.0% !important; width: 10.0% !important; height: 50% !important; z-index: 12 !important; }
+
+/* 雾升级为唯一 C 位 */
+.waiting .member-wu img {
+    brightness: 1.07;
+    filter: brightness(1.07) drop-shadow(0 0 48px rgba(235,245,255,.46)) !important;
+}
+.waiting .member-wu .name-text {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 14px rgba(240,248,255,.85) !important;
+}
+.member-wu .member-name {
+    transform: translateX(-50%) translateY(-18px) !important;
+}
+
+/* 鲨熠恢复为普通核心位，不再使用旧 C 位姓名偏移 */
+.waiting .member-shayi .name-text {
+    font-size: 30px !important;
+    font-weight: 600 !important;
+    letter-spacing: 2px !important;
+}
+.member-shayi .member-name {
+    transform: translateX(-50%) translateY(-28px) !important;
+}
+
 </style>
 <script>
 (function () {
