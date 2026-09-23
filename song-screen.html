@@ -1,0 +1,4417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>HUI ZUAN CLUB</title>
+
+
+<style>
+
+/* =========================================================
+   01 基础
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+body {
+    position: relative;
+
+    font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        Arial,
+        sans-serif;
+
+    color: #ffffff;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #293243 0%,
+            #121720 42%,
+            #05070a 82%
+        );
+
+    transition:
+        background 1s ease;
+}
+
+
+/* =========================================================
+   02 左上角品牌
+========================================================= */
+
+.brand {
+    position: absolute;
+
+    top: 26px;
+    left: 34px;
+
+    z-index: 900;
+
+    font-size: 21px;
+
+    letter-spacing: 10px;
+
+    text-shadow:
+        0 0 20px
+        rgba(230,240,255,.18);
+}
+
+.brand-small {
+    margin-top: 7px;
+
+    font-size: 8px;
+
+    letter-spacing: 7px;
+
+    opacity: .35;
+}
+
+
+/* =========================================================
+   03 开启投屏
+========================================================= */
+
+.start-screen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #293447 0%,
+            #0d1119 56%,
+            #040507 100%
+        );
+}
+
+.start-card {
+    width: 420px;
+
+    padding: 60px 40px;
+
+    text-align: center;
+}
+
+.start-diamond {
+    position: relative;
+
+    width: 66px;
+    height: 66px;
+
+    margin:
+        0 auto 30px;
+
+    transform:
+        rotate(45deg);
+
+    border:
+        1px solid
+        rgba(240,247,255,.72);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.20),
+            rgba(125,150,195,.05)
+        );
+
+    box-shadow:
+        0 0 45px
+        rgba(220,235,255,.24),
+
+        inset 0 0 25px
+        rgba(255,255,255,.10);
+}
+
+.start-diamond::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+}
+
+.start-logo {
+    font-size: 27px;
+
+    letter-spacing: 10px;
+}
+
+.start-sub {
+    margin-top: 11px;
+
+    font-size: 9px;
+
+    letter-spacing: 6px;
+
+    opacity: .38;
+}
+
+.start-btn {
+    margin-top: 34px;
+
+    padding:
+        13px 34px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.36);
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: #ffffff;
+
+    letter-spacing: 4px;
+
+    cursor: pointer;
+
+    transition:
+        .25s ease;
+}
+
+.start-btn:hover {
+    background:
+        rgba(255,255,255,.14);
+
+    box-shadow:
+        0 0 25px
+        rgba(225,238,255,.12);
+}
+
+
+/* =========================================================
+   04 全员待机
+========================================================= */
+
+.waiting {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+}
+
+.waiting.hide {
+    opacity: 0;
+
+    visibility: hidden;
+}
+
+
+/* =========================================================
+   05 待机背景
+========================================================= */
+
+.waiting-ring {
+    position: absolute;
+
+    left: 50%;
+    top: 55%;
+
+    width: 590px;
+    height: 590px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(220,235,255,.10);
+
+    box-shadow:
+        0 0 100px
+        rgba(215,230,255,.055);
+}
+
+.waiting-ring::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 38px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(220,235,255,.035);
+}
+
+.waiting-floor {
+    position: absolute;
+
+    left: 50%;
+    bottom: -220px;
+
+    width: 1200px;
+    height: 450px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(215,230,255,.15),
+            transparent 68%
+        );
+
+    filter:
+        blur(26px);
+}
+
+
+/* =========================================================
+   06 待机标题
+========================================================= */
+
+.waiting-title {
+    position: absolute;
+
+    top: 9%;
+
+    left: 0;
+
+    width: 100%;
+
+    z-index: 300;
+
+    text-align: center;
+}
+
+.waiting-en {
+    font-size: 29px;
+
+    letter-spacing: 13px;
+
+    text-shadow:
+        0 0 25px
+        rgba(235,245,255,.20);
+}
+
+.waiting-cn {
+    margin-top: 12px;
+
+    font-size: 12px;
+
+    letter-spacing: 8px;
+
+    opacity: .52;
+}
+
+.waiting-small {
+    margin-top: 9px;
+
+    font-size: 8px;
+
+    letter-spacing: 7px;
+
+    opacity: .22;
+}
+
+
+/* =========================================================
+   07 待机人物共用
+========================================================= */
+
+.member {
+    position: absolute;
+
+    bottom: -2%;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: flex-end;
+
+    transform-origin:
+        center bottom;
+
+    animation:
+        waitingFloat
+        5s ease-in-out
+        infinite;
+}
+
+.member img {
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    object-position:
+        center bottom;
+
+    filter:
+        brightness(.88)
+        drop-shadow(
+            0 0 16px
+            rgba(215,230,255,.16)
+        );
+}
+
+
+/* =========================================================
+   08 黑色布幕姓名系统
+========================================================= */
+
+.member-name {
+    position: absolute;
+
+    left: 50%;
+
+    bottom:
+        calc(100% - 24px);
+
+    z-index: 800;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    transform:
+        translateX(-50%);
+
+    pointer-events: none;
+}
+
+
+/* 姓名 */
+
+.name-text {
+    order: 1;
+
+    position: relative;
+
+    padding:
+        0 5px 9px;
+
+    color:
+        rgba(245,249,255,.90);
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    letter-spacing: 4px;
+
+    white-space: nowrap;
+
+    text-shadow:
+        0 0 10px
+        rgba(220,235,255,.55);
+}
+
+
+/* 姓名前的小钻 */
+
+.name-text::before {
+    content: "◇";
+
+    display: inline-block;
+
+    margin-right: 6px;
+
+    font-size: 7px;
+
+    color:
+        rgba(230,240,255,.58);
+}
+
+
+/* =========================================================
+   09 垂直姓名线
+========================================================= */
+
+.name-line {
+    order: 2;
+
+    position: relative;
+
+    display: block;
+
+    width: 1px;
+    height: 62px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(245,250,255,.92),
+            rgba(220,235,255,.35),
+            rgba(220,235,255,.05),
+            transparent
+        );
+
+    box-shadow:
+        0 0 7px
+        rgba(220,235,255,.32);
+}
+
+
+/* 线顶部钻石节点 */
+
+.name-line::before {
+    content: "";
+
+    position: absolute;
+
+    left: -3px;
+    top: -3px;
+
+    width: 7px;
+    height: 7px;
+
+    transform:
+        rotate(45deg);
+
+    border:
+        1px solid
+        rgba(245,250,255,.76);
+
+    background:
+        rgba(225,240,255,.12);
+
+    box-shadow:
+        0 0 9px
+        rgba(235,245,255,.58);
+}
+
+
+/* 线末端 */
+
+.name-line::after {
+    content: "";
+
+    position: absolute;
+
+    left: -1px;
+    bottom: 0;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(235,245,255,.60);
+}
+
+
+/* =========================================================
+   10 C位姓名
+========================================================= */
+
+.member-shayi .name-text {
+    font-size: 17px;
+
+    font-weight: 600;
+
+    letter-spacing: 5px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 14px
+        rgba(240,248,255,.85);
+}
+
+.member-shayi .name-text::before {
+    font-size: 9px;
+
+    color:
+        rgba(255,255,255,.92);
+}
+
+.member-shayi .name-line {
+    height: 82px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,1),
+            rgba(235,245,255,.48),
+            rgba(220,235,255,.10),
+            transparent
+        );
+
+    box-shadow:
+        0 0 13px
+        rgba(235,245,255,.52);
+}
+
+
+/* =========================================================
+   11 人物浮动
+========================================================= */
+
+@keyframes waitingFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-4px);
+    }
+
+}
+
+
+/* =========================================================
+   12 十四人站位
+
+   遇见 空白 泽攸 青决 弋阳 防 雾
+                    鲨熠
+   祈年 艾 宸御 北北 辣椒油 七百万
+========================================================= */
+
+
+/* 01 遇见 */
+
+.member-feiye {
+    left: -2.5%;
+
+    width: 10%;
+
+    height: 48%;
+
+    z-index: 10;
+
+    animation-delay:
+        -.3s;
+}
+
+
+/* 02 空白 */
+
+.member-kongbai {
+    left: 4%;
+
+    width: 10.5%;
+
+    height: 52%;
+
+    z-index: 12;
+
+    animation-delay:
+        -.8s;
+}
+
+
+/* 03 泽攸 */
+
+.member-zeyou {
+    left: 10.5%;
+
+    width: 11%;
+
+    height: 56%;
+
+    z-index: 14;
+
+    animation-delay:
+        -1.3s;
+}
+
+
+/* 04 青决 */
+
+.member-qingjue {
+    left: 17%;
+
+    width: 11.5%;
+
+    height: 60%;
+
+    z-index: 17;
+
+    animation-delay:
+        -2.1s;
+}
+
+
+/* 05 弋阳 */
+
+.member-yiyang {
+    left: 23.5%;
+
+    width: 12%;
+
+    height: 64%;
+
+    z-index: 22;
+
+    animation-delay:
+        -3s;
+}
+
+
+/* =========================================================
+   06 防
+   独立留空间
+========================================================= */
+
+.member-fang {
+    left: 30.3%;
+
+    width: 11.5%;
+
+    height: 68%;
+
+    z-index: 31;
+
+    animation-delay:
+        -2.4s;
+}
+
+.member-fang img {
+    filter:
+        brightness(.97)
+        drop-shadow(
+            0 0 25px
+            rgba(225,238,255,.25)
+        );
+}
+
+
+/* =========================================================
+   07 雾
+   鲨熠左副C
+========================================================= */
+
+.member-wu {
+    left: 37.1%;
+
+    width: 12%;
+
+    height: 73%;
+
+    z-index: 40;
+
+    animation-delay:
+        -1.7s;
+}
+
+.member-wu img {
+    filter:
+        brightness(.98)
+        drop-shadow(
+            0 0 28px
+            rgba(225,238,255,.28)
+        );
+}
+
+
+/* =========================================================
+   08 鲨熠
+   唯一C位
+========================================================= */
+
+.member-shayi {
+    left: 44%;
+
+    width: 15%;
+
+    height: 87%;
+
+    z-index: 60;
+
+    animation-delay:
+        -.7s;
+}
+
+.member-shayi img {
+    filter:
+        brightness(.88)
+        drop-shadow(
+            0 0 16px
+            rgba(215,230,255,.16)
+        );
+}
+
+
+/* =========================================================
+   09 祈年
+   鲨熠右副C
+========================================================= */
+
+.member-qinian {
+    left: 53.5%;
+
+    width: 12%;
+
+    height: 73%;
+
+    z-index: 41;
+
+    animation-delay:
+        -1.2s;
+}
+
+.member-qinian img {
+    filter:
+        brightness(.98)
+        drop-shadow(
+            0 0 28px
+            rgba(225,238,255,.28)
+        );
+}
+
+
+/* 10 艾 */
+
+.member-ai {
+    left: 60.8%;
+
+    width: 11.5%;
+
+    height: 68%;
+
+    z-index: 30;
+
+    animation-delay:
+        -2.6s;
+}
+
+
+/* 11 宸御 */
+
+.member-jinxun {
+    left: 67.8%;
+
+    width: 11.5%;
+
+    height: 64%;
+
+    z-index: 24;
+
+    animation-delay:
+        -1.5s;
+}
+
+
+/* =========================================================
+   12 北北
+========================================================= */
+
+.member-beibei {
+    left: 74.8%;
+
+    width: 11.5%;
+
+    height: 60%;
+
+    z-index: 26;
+
+    animation-delay:
+        -3.1s;
+}
+
+.member-beibei img {
+    filter:
+        brightness(.93)
+        drop-shadow(
+            0 0 21px
+            rgba(220,235,255,.20)
+        );
+}
+
+
+/* 13 辣椒油 */
+
+.member-lajiaoyou {
+    left: 81.8%;
+
+    width: 11%;
+
+    height: 55%;
+
+    z-index: 18;
+
+    animation-delay:
+        -2s;
+}
+
+
+/* 14 七百万 */
+
+.member-qibaiwan {
+    left: 89%;
+
+    width: 10.5%;
+
+    height: 50%;
+
+    z-index: 15;
+
+    animation-delay:
+        -1s;
+}
+
+
+/* =========================================================
+   13 姓名错层
+
+   名字全部在黑色布幕
+   但高低错开避免打架
+========================================================= */
+
+
+/* 第一排 */
+
+.member-feiye .member-name,
+.member-zeyou .member-name,
+.member-yiyang .member-name,
+.member-wu .member-name,
+.member-qinian .member-name,
+.member-jinxun .member-name,
+.member-lajiaoyou .member-name {
+
+    transform:
+        translateX(-50%)
+        translateY(-28px);
+}
+
+
+/* 第二排 */
+
+.member-kongbai .member-name,
+.member-qingjue .member-name,
+.member-fang .member-name,
+.member-ai .member-name,
+.member-beibei .member-name,
+.member-qibaiwan .member-name {
+
+    transform:
+        translateX(-50%)
+        translateY(8px);
+}
+
+
+/* C位最高 */
+
+.member-shayi .member-name {
+
+    transform:
+        translateX(-50%)
+        translateY(-58px);
+}
+
+
+/* =========================================================
+   14 演唱模式
+========================================================= */
+
+.performance {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+}
+
+.performance.show {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+/* =========================================================
+   15 演唱人物
+========================================================= */
+
+.character-wrap {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 47%;
+    height: 100%;
+
+    z-index: 20;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.character {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    object-position:
+        center bottom;
+
+    transition:
+        transform 1s ease,
+        filter 1s ease,
+        opacity .4s ease;
+}
+
+.character.enter {
+    animation:
+        characterEnter
+        .9s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes characterEnter {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(55px)
+            scale(.87);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   16 珠宝舞台
+========================================================= */
+
+.gem-stage {
+    position: absolute;
+
+    left: 23%;
+    top: 50%;
+
+    width: 540px;
+    height: 540px;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 6;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   17 主钻石
+========================================================= */
+
+.main-diamond {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 255px;
+    height: 255px;
+
+    transform:
+        translate(-50%, -50%);
+
+    opacity: .18;
+
+    clip-path:
+        polygon(
+            25% 8%,
+            75% 8%,
+            98% 34%,
+            50% 95%,
+            2% 34%
+        );
+
+    border:
+        1px solid
+        rgba(230,240,255,.22);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.16),
+            rgba(115,145,190,.05) 30%,
+            rgba(255,255,255,.14) 50%,
+            rgba(100,125,175,.05) 72%,
+            rgba(255,255,255,.11)
+        );
+
+    transition:
+        all .9s ease;
+}
+
+.main-diamond::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            45deg,
+            transparent 45%,
+            rgba(255,255,255,.25) 49%,
+            transparent 52%
+        ),
+
+        linear-gradient(
+            -45deg,
+            transparent 45%,
+            rgba(255,255,255,.18) 49%,
+            transparent 52%
+        );
+}
+
+
+/* =========================================================
+   18 钻石轨道
+========================================================= */
+
+.gem-orbit {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    border-radius: 50%;
+
+    opacity: 0;
+
+    transition:
+        opacity .8s ease;
+}
+
+.orbit-one {
+    width: 365px;
+    height: 365px;
+
+    border:
+        1px solid
+        rgba(235,243,255,.34);
+
+    transform:
+        translate(-50%, -50%);
+}
+
+.orbit-two {
+    width: 445px;
+    height: 270px;
+
+    border:
+        1px solid
+        rgba(235,243,255,.25);
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-16deg);
+}
+
+.orbit-three {
+    width: 475px;
+    height: 320px;
+
+    border:
+        1px solid
+        rgba(235,243,255,.18);
+
+    transform:
+        translate(-50%, -50%)
+        rotate(18deg);
+}
+
+
+/* =========================================================
+   19 灰钻皇冠
+========================================================= */
+
+.jewel-crown {
+    position: absolute;
+
+    left: 50%;
+    top: 2%;
+
+    width: 190px;
+    height: 90px;
+
+    transform:
+        translateX(-50%);
+
+    opacity: 0;
+
+    transition:
+        opacity .8s ease;
+}
+
+.jewel-crown::before {
+    content: "";
+
+    position: absolute;
+
+    left: 20px;
+    bottom: 7px;
+
+    width: 150px;
+    height: 52px;
+
+    clip-path:
+        polygon(
+            0% 100%,
+            8% 38%,
+            30% 72%,
+            50% 0%,
+            70% 72%,
+            92% 38%,
+            100% 100%
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.18),
+            rgba(245,248,255,.88),
+            rgba(140,165,210,.24),
+            rgba(255,255,255,.76)
+        );
+
+    filter:
+        drop-shadow(
+            0 0 17px
+            rgba(235,245,255,.60)
+        );
+}
+
+.jewel-crown::after {
+    content: "";
+
+    position: absolute;
+
+    left: 86px;
+    top: 3px;
+
+    width: 18px;
+    height: 18px;
+
+    transform:
+        rotate(45deg);
+
+    background:
+        rgba(255,255,255,.95);
+
+    box-shadow:
+        0 0 14px #ffffff,
+        0 0 35px
+        rgba(210,230,255,.70);
+}
+
+
+/* =========================================================
+   20 珠宝垂链
+========================================================= */
+
+.jewel-chain {
+    position: absolute;
+
+    top: 17%;
+    bottom: 11%;
+
+    width: 1px;
+
+    opacity: 0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(240,246,255,.70) 0,
+            rgba(240,246,255,.70) 3px,
+            transparent 3px,
+            transparent 9px
+        );
+
+    transition:
+        opacity .8s ease;
+}
+
+.chain-left {
+    left: 11%;
+}
+
+.chain-right {
+    right: 11%;
+}
+
+.jewel-chain::before,
+.jewel-chain::after {
+    content: "";
+
+    position: absolute;
+
+    left: -4px;
+
+    width: 9px;
+    height: 9px;
+
+    transform:
+        rotate(45deg);
+
+    background:
+        rgba(248,251,255,.92);
+
+    box-shadow:
+        0 0 11px
+        rgba(230,243,255,.75);
+}
+
+.jewel-chain::before {
+    top: 28%;
+}
+
+.jewel-chain::after {
+    top: 68%;
+}
+
+
+/* =========================================================
+   21 晶体
+========================================================= */
+
+.crystal {
+    position: absolute;
+
+    width: 15px;
+    height: 30px;
+
+    opacity: 0;
+
+    clip-path:
+        polygon(
+            50% 0%,
+            100% 40%,
+            70% 100%,
+            30% 100%,
+            0% 40%
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.98),
+            rgba(145,175,225,.25)
+        );
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(225,240,255,.60)
+        );
+
+    transition:
+        opacity .8s ease;
+}
+
+.crystal-1 {
+    left: 7%;
+    top: 31%;
+
+    transform:
+        rotate(-35deg);
+}
+
+.crystal-2 {
+    left: 15%;
+    top: 69%;
+
+    transform:
+        rotate(25deg);
+}
+
+.crystal-3 {
+    right: 8%;
+    top: 34%;
+
+    transform:
+        rotate(30deg);
+}
+
+.crystal-4 {
+    right: 16%;
+    top: 72%;
+
+    transform:
+        rotate(-20deg);
+}
+
+
+/* =========================================================
+   22 聚光灯
+========================================================= */
+
+.spotlight {
+    position: absolute;
+
+    left: 4%;
+    top: -30%;
+
+    width: 40%;
+    height: 130%;
+
+    transform:
+        rotate(7deg);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.30),
+            transparent 70%
+        );
+
+    filter:
+        blur(45px);
+
+    opacity: 0;
+
+    transition:
+        opacity 1s ease;
+
+    z-index: 4;
+}
+
+
+/* =========================================================
+   23 粒子
+========================================================= */
+
+.particles {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 12;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .8s ease;
+}
+
+.particle {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    transform:
+        rotate(45deg);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 0 12px
+        rgba(230,240,255,.8);
+
+    animation:
+        particleMove
+        6s linear
+        infinite;
+}
+
+.particle:nth-child(1) {
+    left: 8%;
+    top: 75%;
+}
+
+.particle:nth-child(2) {
+    left: 15%;
+    top: 55%;
+
+    animation-delay: 1s;
+}
+
+.particle:nth-child(3) {
+    left: 25%;
+    top: 82%;
+
+    animation-delay: 2s;
+}
+
+.particle:nth-child(4) {
+    left: 34%;
+    top: 63%;
+
+    animation-delay: 3s;
+}
+
+.particle:nth-child(5) {
+    left: 42%;
+    top: 78%;
+
+    animation-delay: 4s;
+}
+
+.particle:nth-child(6) {
+    left: 30%;
+    top: 35%;
+
+    animation-delay: 5s;
+}
+
+.particle:nth-child(7) {
+    left: 20%;
+    top: 25%;
+
+    animation-delay: 2.6s;
+}
+
+.particle:nth-child(8) {
+    left: 39%;
+    top: 45%;
+
+    animation-delay: 4.4s;
+}
+
+@keyframes particleMove {
+
+    0% {
+        transform:
+            translateY(100px)
+            rotate(45deg);
+
+        opacity: 0;
+    }
+
+    25% {
+        opacity: .85;
+    }
+
+    100% {
+        transform:
+            translateY(-420px)
+            rotate(225deg);
+
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================================================
+   24 演唱资料
+========================================================= */
+
+.info {
+    position: absolute;
+
+    right: 2%;
+    top: 0;
+
+    width: 57%;
+    height: 100%;
+
+    z-index: 40;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.stage-name {
+    margin-bottom: 24px;
+
+    font-size: 14px;
+
+    letter-spacing: 7px;
+
+    opacity: .65;
+
+    transition:
+        all .8s ease;
+}
+
+.singer {
+    font-size: 58px;
+
+    font-weight: 600;
+
+    letter-spacing: 10px;
+}
+
+.song {
+    margin-top: 15px;
+
+    font-size: 29px;
+
+    color:
+        rgba(240,245,255,.88);
+}
+
+.requester {
+    margin-top: 30px;
+
+    font-size: 15px;
+
+    opacity: .52;
+}
+
+.heart-label {
+    margin-top: 38px;
+
+    font-size: 9px;
+
+    letter-spacing: 7px;
+
+    opacity: .32;
+}
+
+.heart {
+    margin-top: 8px;
+
+    font-size: 43px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   25 心动进度条
+========================================================= */
+
+.progress-box {
+    width: 500px;
+
+    margin-top: 20px;
+}
+
+.progress-bg {
+    width: 100%;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.06);
+}
+
+.progress {
+    width: 0;
+
+    height: 100%;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7e8ca5,
+            #e8f0ff,
+            #ffffff
+        );
+
+    box-shadow:
+        0 0 18px
+        rgba(230,240,255,.40);
+
+    transition:
+        width .55s ease;
+}
+
+.range {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin-top: 8px;
+
+    font-size: 9px;
+
+    opacity: .30;
+}
+
+.next-stage {
+    margin-top: 12px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    opacity: .48;
+}
+
+
+/* =========================================================
+   26 基础舞台
+========================================================= */
+
+body.level0 {
+    background:
+        radial-gradient(
+            circle at 62% 42%,
+            #283142,
+            #11151e 43%,
+            #050608 80%
+        );
+}
+
+body.level0 .main-diamond {
+    opacity: .18;
+}
+
+body.level0 .character {
+    filter:
+        brightness(.84)
+        drop-shadow(
+            0 0 17px
+            rgba(205,220,245,.13)
+        );
+}
+
+
+/* =========================================================
+   27 高级舞台
+========================================================= */
+
+body.level1 {
+    background:
+        radial-gradient(
+            circle at 58% 42%,
+            #46536a,
+            #171d29 43%,
+            #050608 80%
+        );
+}
+
+body.level1 .main-diamond {
+    opacity: .58;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1.05);
+
+    box-shadow:
+        0 0 45px
+        rgba(220,235,255,.25),
+
+        inset 0 0 35px
+        rgba(255,255,255,.10);
+}
+
+body.level1 .orbit-one {
+    opacity: .50;
+
+    animation:
+        orbitSpin
+        18s linear
+        infinite;
+}
+
+body.level1 .character {
+    filter:
+        brightness(.98)
+        drop-shadow(
+            0 0 40px
+            rgba(220,235,255,.35)
+        );
+}
+
+
+/* =========================================================
+   28 高光舞台
+========================================================= */
+
+body.level2 {
+    background:
+        radial-gradient(
+            circle at 57% 40%,
+            #68768f,
+            #232c3d 38%,
+            #06080d 78%
+        );
+}
+
+body.level2 .main-diamond {
+    width: 285px;
+
+    height: 285px;
+
+    opacity: .88;
+
+    box-shadow:
+        0 0 70px
+        rgba(230,240,255,.40),
+
+        inset 0 0 45px
+        rgba(255,255,255,.18);
+}
+
+body.level2 .orbit-one,
+body.level2 .orbit-two {
+    opacity: .72;
+}
+
+body.level2 .orbit-one {
+    animation:
+        orbitSpin
+        14s linear
+        infinite;
+}
+
+body.level2 .orbit-two {
+    animation:
+        orbitSpinReverse
+        12s linear
+        infinite;
+}
+
+body.level2 .crystal {
+    opacity: .72;
+}
+
+body.level2 .spotlight {
+    opacity: .38;
+}
+
+body.level2 .particles {
+    opacity: .72;
+}
+
+body.level2 .character {
+    transform:
+        scale(1.025);
+
+    filter:
+        brightness(1.07)
+        drop-shadow(
+            0 0 60px
+            rgba(230,240,255,.58)
+        );
+}
+
+
+/* =========================================================
+   29 灰钻舞台
+   最高珠宝等级
+========================================================= */
+
+body.level3 {
+    background:
+
+        radial-gradient(
+            circle at 20% 47%,
+            rgba(245,248,255,.30),
+            transparent 23%
+        ),
+
+        radial-gradient(
+            circle at 57% 40%,
+            #b3bfd0 0%,
+            #65728a 19%,
+            #333d51 39%,
+            #080a10 76%
+        );
+}
+
+body.level3 .main-diamond {
+    width: 325px;
+
+    height: 325px;
+
+    opacity: 1;
+
+    border-color:
+        rgba(255,255,255,.75);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.50),
+            rgba(170,200,240,.13) 24%,
+            rgba(255,255,255,.52) 47%,
+            rgba(125,155,210,.13) 70%,
+            rgba(255,255,255,.38)
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(255,255,255,.68),
+
+        0 0 115px
+        rgba(215,235,255,.52),
+
+        inset 0 0 65px
+        rgba(255,255,255,.32);
+
+    animation:
+        diamondBreath
+        2.6s ease-in-out
+        infinite;
+}
+
+body.level3 .orbit-one,
+body.level3 .orbit-two,
+body.level3 .orbit-three {
+    opacity: .90;
+
+    box-shadow:
+        0 0 16px
+        rgba(230,240,255,.20);
+}
+
+body.level3 .orbit-one {
+    animation:
+        orbitSpin
+        11s linear
+        infinite;
+}
+
+body.level3 .orbit-two {
+    animation:
+        orbitSpinReverse
+        9s linear
+        infinite;
+}
+
+body.level3 .orbit-three {
+    animation:
+        orbitSpin
+        15s linear
+        infinite;
+}
+
+body.level3 .jewel-crown {
+    opacity: 1;
+}
+
+body.level3 .jewel-chain {
+    opacity: .82;
+}
+
+body.level3 .crystal {
+    opacity: 1;
+
+    animation:
+        crystalGlow
+        2s ease-in-out
+        infinite;
+}
+
+body.level3 .spotlight {
+    opacity: .72;
+}
+
+body.level3 .particles {
+    opacity: 1;
+}
+
+body.level3 .character {
+    transform:
+        scale(1.055);
+
+    filter:
+        brightness(1.14)
+        drop-shadow(
+            0 0 85px
+            rgba(240,248,255,.82)
+        );
+}
+
+body.level3 .singer,
+body.level3 .heart {
+    text-shadow:
+        0 0 12px
+        rgba(255,255,255,.72),
+
+        0 0 42px
+        rgba(215,235,255,.52);
+}
+
+body.level3 .stage-name {
+    color: #ffffff;
+
+    text-shadow:
+        0 0 15px
+        rgba(255,255,255,.68);
+}
+
+
+/* =========================================================
+   30 舞台动画
+========================================================= */
+
+@keyframes orbitSpin {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg);
+    }
+
+}
+
+@keyframes orbitSpinReverse {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg);
+    }
+
+}
+
+@keyframes diamondBreath {
+
+    0%,
+    100% {
+        filter:
+            brightness(1);
+    }
+
+    50% {
+        filter:
+            brightness(1.38);
+    }
+
+}
+
+@keyframes crystalGlow {
+
+    0%,
+    100% {
+        filter:
+            brightness(.9)
+            drop-shadow(
+                0 0 6px
+                rgba(220,235,255,.45)
+            );
+    }
+
+    50% {
+        filter:
+            brightness(1.55)
+            drop-shadow(
+                0 0 18px
+                rgba(240,248,255,.94)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   31 升级动画
+========================================================= */
+
+.upgrade {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1500;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.upgrade.play {
+    animation:
+        upgradeFade
+        3s ease;
+}
+
+.upgrade-light {
+    position: absolute;
+
+    width: 680px;
+    height: 680px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.36),
+            rgba(200,225,255,.12) 30%,
+            transparent 68%
+        );
+
+    filter:
+        blur(10px);
+}
+
+.upgrade-orbit {
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(240,247,255,.44);
+
+    animation:
+        upgradeOrbit
+        3s linear
+        infinite;
+}
+
+.upgrade-orbit::before,
+.upgrade-orbit::after {
+    content: "";
+
+    position: absolute;
+
+    width: 11px;
+    height: 11px;
+
+    transform:
+        rotate(45deg);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 0 16px
+        rgba(255,255,255,.95);
+}
+
+.upgrade-orbit::before {
+    left: 35px;
+
+    top: 55px;
+}
+
+.upgrade-orbit::after {
+    right: 35px;
+
+    bottom: 55px;
+}
+
+
+/* =========================================================
+   32 升级主钻
+========================================================= */
+
+.upgrade-diamond {
+    position: relative;
+
+    width: 280px;
+    height: 220px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    clip-path:
+        polygon(
+            24% 7%,
+            76% 7%,
+            98% 35%,
+            50% 96%,
+            2% 35%
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.34),
+            rgba(130,160,210,.10),
+            rgba(255,255,255,.34)
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(255,255,255,.58),
+
+        0 0 115px
+        rgba(210,235,255,.60),
+
+        inset 0 0 55px
+        rgba(255,255,255,.23);
+}
+
+.upgrade-diamond::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 34%;
+
+    height: 1px;
+
+    background:
+        rgba(255,255,255,.38);
+
+    box-shadow:
+        0 0 8px
+        rgba(255,255,255,.30);
+}
+
+.upgrade-diamond::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 7%;
+
+    width: 1px;
+    height: 89%;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,.32),
+            rgba(255,255,255,.07)
+        );
+}
+
+.upgrade-content {
+    position: relative;
+
+    z-index: 10;
+
+    text-align: center;
+
+    text-shadow:
+        0 0 18px
+        rgba(255,255,255,.80);
+}
+
+.upgrade-en {
+    font-size: 9px;
+
+    letter-spacing: 7px;
+
+    opacity: .65;
+}
+
+.upgrade-cn {
+    margin-top: 12px;
+
+    font-size: 29px;
+
+    letter-spacing: 5px;
+
+    white-space: nowrap;
+}
+
+@keyframes upgradeFade {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            scale(.48);
+    }
+
+    15% {
+        opacity: 1;
+
+        transform:
+            scale(1.08);
+    }
+
+    35% {
+        transform:
+            scale(1);
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            scale(1.18);
+    }
+
+}
+
+@keyframes upgradeOrbit {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   33 Footer
+========================================================= */
+
+.footer {
+    position: absolute;
+
+    right: 32px;
+    bottom: 18px;
+
+    z-index: 900;
+
+    font-size: 8px;
+
+    letter-spacing: 6px;
+
+    opacity: .18;
+}
+
+
+
+/* =========================================================
+   HUI ZUAN 2026 四阶舞台重制版
+   这一区放在 style 最后，确保覆盖旧舞台样式
+========================================================= */
+.performance { overflow: hidden; }
+.gem-stage { z-index: 10; width: 620px; height: 620px; left: 23%; top: 50%; }
+.gem-stage::before,.gem-stage::after { content:""; position:absolute; left:50%; pointer-events:none; transition:all .8s ease; }
+.gem-stage::before { bottom:5%; width:430px; height:92px; transform:translateX(-50%); border-radius:50%; opacity:.2; border:1px solid rgba(225,238,255,.18); background:radial-gradient(ellipse,rgba(205,225,255,.10),rgba(30,40,58,.05) 48%,transparent 72%); }
+.gem-stage::after { top:50%; width:470px; height:470px; transform:translate(-50%,-50%); border-radius:50%; opacity:0; }
+.main-diamond,.gem-orbit,.jewel-crown,.jewel-chain,.crystal,.spotlight,.particles { transition:all .8s cubic-bezier(.2,.75,.2,1); }
+
+/* LEVEL 0 基础舞台：黑银空场 */
+body.level0 { background:radial-gradient(ellipse at 24% 80%,rgba(135,150,175,.08),transparent 28%),radial-gradient(circle at 58% 42%,#252c39 0%,#11151d 42%,#030405 82%); }
+body.level0 .gem-stage::before { width:360px; height:65px; opacity:.28; border-color:rgba(225,238,255,.20); box-shadow:0 0 24px rgba(200,220,255,.05); }
+body.level0 .gem-stage::after,body.level0 .main-diamond,body.level0 .gem-orbit,body.level0 .jewel-crown,body.level0 .jewel-chain,body.level0 .crystal,body.level0 .spotlight,body.level0 .particles { opacity:0 !important; }
+body.level0 .character { transform:scale(.98); filter:brightness(.78) saturate(.85) drop-shadow(0 10px 24px rgba(0,0,0,.48)); }
+
+/* LEVEL 1 高级舞台：银环启动 + 宝石底座 */
+body.level1 { background:radial-gradient(ellipse at 23% 78%,rgba(195,215,245,.18),transparent 31%),radial-gradient(circle at 56% 40%,#4b5870 0%,#202838 38%,#05070b 80%); }
+body.level1 .gem-stage::before { width:450px; height:88px; opacity:.95; border:2px solid rgba(225,238,255,.48); background:radial-gradient(ellipse,rgba(235,246,255,.26),rgba(100,125,165,.12) 42%,transparent 70%); box-shadow:0 0 22px rgba(220,238,255,.28),inset 0 0 28px rgba(230,242,255,.16); }
+body.level1 .gem-stage::after { opacity:.78; width:410px; height:410px; border:1px solid rgba(225,240,255,.34); box-shadow:0 0 35px rgba(205,228,255,.16),inset 0 0 35px rgba(205,228,255,.08); animation:hzHaloPulse 3.8s ease-in-out infinite; }
+body.level1 .main-diamond { opacity:.72 !important; width:245px; height:245px; border:2px solid rgba(240,248,255,.55); background:linear-gradient(135deg,rgba(255,255,255,.32),rgba(115,145,195,.08) 25%,rgba(255,255,255,.24) 50%,rgba(110,140,190,.08) 75%,rgba(255,255,255,.28)); box-shadow:0 0 40px rgba(220,238,255,.28),inset 0 0 35px rgba(255,255,255,.15); }
+body.level1 .orbit-one { opacity:.95 !important; width:410px; height:410px; border:2px solid rgba(235,246,255,.52); box-shadow:0 0 18px rgba(225,240,255,.25); animation:orbitSpin 18s linear infinite; }
+body.level1 .orbit-two,body.level1 .orbit-three,body.level1 .jewel-crown,body.level1 .jewel-chain,body.level1 .crystal,body.level1 .particles { opacity:0 !important; }
+body.level1 .spotlight { opacity:.16 !important; }
+body.level1 .character { transform:scale(1); filter:brightness(.98) drop-shadow(0 0 34px rgba(220,235,255,.34)); }
+
+/* LEVEL 2 高光舞台：双轨 + 水晶 + 聚光灯 + 钻石雨 */
+body.level2 { background:radial-gradient(ellipse at 22% 82%,rgba(235,245,255,.34),transparent 32%),radial-gradient(circle at 24% 40%,rgba(190,215,250,.18),transparent 27%),radial-gradient(circle at 57% 38%,#7787a2 0%,#303b50 32%,#080b12 74%); }
+body.level2 .gem-stage::before { width:510px; height:105px; opacity:1; border:2px solid rgba(245,250,255,.70); background:radial-gradient(ellipse,rgba(245,251,255,.40),rgba(130,160,205,.16) 42%,transparent 72%); box-shadow:0 0 35px rgba(230,245,255,.42),0 0 80px rgba(180,215,255,.18),inset 0 0 35px rgba(255,255,255,.24); }
+body.level2 .gem-stage::after { opacity:.95; width:475px; height:475px; border:1px solid rgba(240,248,255,.58); box-shadow:0 0 55px rgba(220,240,255,.30),inset 0 0 45px rgba(220,240,255,.13); animation:hzHaloPulse 2.8s ease-in-out infinite; }
+body.level2 .main-diamond { opacity:.96 !important; width:290px; height:290px; border:2px solid rgba(250,252,255,.80); background:linear-gradient(135deg,rgba(255,255,255,.48),rgba(125,155,210,.10) 22%,rgba(255,255,255,.35) 45%,rgba(100,135,195,.10) 68%,rgba(255,255,255,.42)); box-shadow:0 0 65px rgba(235,247,255,.48),inset 0 0 50px rgba(255,255,255,.22); }
+body.level2 .orbit-one { opacity:1 !important; width:455px; height:455px; border:2px solid rgba(245,250,255,.70); animation:orbitSpin 14s linear infinite; }
+body.level2 .orbit-two { opacity:.9 !important; width:520px; height:315px; border:1px solid rgba(235,245,255,.58); animation:orbitSpinReverse 11s linear infinite; }
+body.level2 .orbit-three,body.level2 .jewel-crown,body.level2 .jewel-chain { opacity:0 !important; }
+body.level2 .crystal { opacity:1 !important; width:22px; height:44px; filter:drop-shadow(0 0 12px rgba(240,248,255,.95)) drop-shadow(0 0 26px rgba(185,220,255,.55)); animation:crystalGlow 2.2s ease-in-out infinite; }
+body.level2 .spotlight { opacity:.72 !important; width:46%; background:linear-gradient(180deg,rgba(255,255,255,.46),rgba(205,225,255,.13) 48%,transparent 76%); filter:blur(32px); }
+body.level2 .particles { opacity:1 !important; }
+body.level2 .particle { width:7px; height:7px; box-shadow:0 0 10px #fff,0 0 22px rgba(210,235,255,.9); }
+body.level2 .character { transform:scale(1.035); filter:brightness(1.09) drop-shadow(0 0 58px rgba(230,244,255,.62)); }
+
+/* LEVEL 3 灰钻舞台：珠宝王冠 + 巨钻 + 三重轨道 + 钻链 */
+body.level3 { background:radial-gradient(ellipse at 23% 85%,rgba(255,255,255,.58),transparent 30%),radial-gradient(circle at 22% 42%,rgba(240,248,255,.36),transparent 28%),radial-gradient(circle at 54% 32%,#d5deea 0%,#8595af 16%,#40506a 36%,#121a28 61%,#020304 90%); }
+body.level3 .gem-stage { width:680px; height:680px; }
+body.level3 .gem-stage::before { bottom:2%; width:590px; height:125px; opacity:1; border:3px double rgba(255,255,255,.92); background:radial-gradient(ellipse,rgba(255,255,255,.58),rgba(170,200,235,.22) 38%,rgba(75,95,130,.10) 58%,transparent 74%); box-shadow:0 0 40px rgba(255,255,255,.62),0 0 105px rgba(195,225,255,.42),inset 0 0 45px rgba(255,255,255,.38); }
+body.level3 .gem-stage::after { opacity:1; width:560px; height:560px; border:2px solid rgba(255,255,255,.82); box-shadow:0 0 35px rgba(255,255,255,.72),0 0 90px rgba(205,232,255,.44),inset 0 0 55px rgba(225,242,255,.22); animation:hzRoyalHalo 3s ease-in-out infinite; }
+body.level3 .main-diamond { opacity:1 !important; width:365px; height:365px; border:2px solid rgba(255,255,255,.96); background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(140,175,225,.15) 18%,rgba(255,255,255,.54) 36%,rgba(110,145,205,.12) 54%,rgba(255,255,255,.78) 73%,rgba(160,195,235,.20)); box-shadow:0 0 45px rgba(255,255,255,.92),0 0 115px rgba(220,240,255,.72),0 0 190px rgba(175,215,255,.36),inset 0 0 85px rgba(255,255,255,.46); animation:diamondBreath 2.5s ease-in-out infinite; }
+body.level3 .orbit-one { opacity:1 !important; width:500px; height:500px; border:2px solid rgba(255,255,255,.92); box-shadow:0 0 24px rgba(255,255,255,.52); animation:orbitSpin 11s linear infinite; }
+body.level3 .orbit-two { opacity:1 !important; width:600px; height:350px; border:2px solid rgba(240,248,255,.72); box-shadow:0 0 20px rgba(225,242,255,.38); animation:orbitSpinReverse 9s linear infinite; }
+body.level3 .orbit-three { opacity:1 !important; width:625px; height:410px; border:1px solid rgba(235,246,255,.58); box-shadow:0 0 18px rgba(225,242,255,.30); animation:orbitSpin 15s linear infinite; }
+body.level3 .jewel-crown { opacity:1 !important; top:-1%; width:260px; height:125px; filter:drop-shadow(0 0 18px rgba(255,255,255,.72)) drop-shadow(0 0 45px rgba(205,230,255,.52)); animation:hzCrownFloat 3.2s ease-in-out infinite; }
+body.level3 .jewel-crown::before { left:20px; width:220px; height:82px; background:linear-gradient(135deg,rgba(255,255,255,.32),#fff,rgba(150,185,230,.35),rgba(255,255,255,.95)); }
+body.level3 .jewel-crown::after { left:121px; width:20px; height:20px; background:#fff; box-shadow:0 0 15px #fff,0 0 42px rgba(210,235,255,.95); }
+body.level3 .jewel-chain { opacity:1 !important; width:2px; background:repeating-linear-gradient(to bottom,rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 4px,transparent 4px,transparent 10px); filter:drop-shadow(0 0 6px rgba(225,242,255,.8)); }
+body.level3 .chain-left { left:6%; } body.level3 .chain-right { right:6%; }
+body.level3 .crystal { opacity:1 !important; width:27px; height:54px; background:linear-gradient(135deg,#fff,rgba(185,220,255,.42) 40%,rgba(255,255,255,.95)); filter:drop-shadow(0 0 15px #fff) drop-shadow(0 0 38px rgba(190,225,255,.82)); animation:crystalGlow 1.8s ease-in-out infinite; }
+body.level3 .spotlight { opacity:1 !important; width:52%; background:linear-gradient(180deg,rgba(255,255,255,.60),rgba(220,238,255,.20) 50%,transparent 78%); filter:blur(26px); }
+body.level3 .particles { opacity:1 !important; }
+body.level3 .particle { width:8px; height:8px; box-shadow:0 0 12px #fff,0 0 30px rgba(215,238,255,1); }
+body.level3 .character { transform:scale(1.065); filter:brightness(1.18) contrast(1.03) drop-shadow(0 0 42px rgba(255,255,255,.82)) drop-shadow(0 0 105px rgba(205,232,255,.68)); }
+body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0 10px rgba(255,255,255,.95),0 0 34px rgba(220,240,255,.75),0 0 75px rgba(180,220,255,.42); }
+
+@keyframes hzHaloPulse { 0%,100%{transform:translate(-50%,-50%) scale(.98);opacity:.68} 50%{transform:translate(-50%,-50%) scale(1.035);opacity:1} }
+@keyframes hzRoyalHalo { 0%,100%{transform:translate(-50%,-50%) rotate(0deg) scale(.98)} 50%{transform:translate(-50%,-50%) rotate(4deg) scale(1.035)} }
+@keyframes hzCrownFloat { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-10px)} }
+
+/* 待机人物恢复不同步呼吸，只动图片，姓名固定 */
+.waiting .member { animation:none !important; }
+.waiting .member img { transform-origin:center bottom; animation:hzWaitingBreath 5s ease-in-out infinite; will-change:transform; }
+.waiting .member-shayi img { animation-duration:5.8s; animation-delay:-.8s; }
+.waiting .member-wu img { animation-duration:5.1s; animation-delay:-2.1s; }
+.waiting .member-qinian img { animation-duration:5.3s; animation-delay:-3.4s; }
+.waiting .member-fang img { animation-delay:-1.2s; }
+.waiting .member-ai img { animation-delay:-3.1s; }
+.waiting .member-yiyang img { animation-duration:5.4s; animation-delay:-2.7s; }
+.waiting .member-jinxun img { animation-duration:4.9s; animation-delay:-.6s; }
+.waiting .member-qingjue img { animation-duration:5.6s; animation-delay:-4.1s; }
+.waiting .member-beibei img { animation-duration:5.2s; animation-delay:-1.8s; }
+.waiting .member-zeyou img { animation-duration:4.8s; animation-delay:-3.7s; }
+.waiting .member-lajiaoyou img { animation-duration:5.5s; animation-delay:-2.4s; }
+.waiting .member-kongbai img { animation-duration:5.1s; animation-delay:-.9s; }
+.waiting .member-qibaiwan img { animation-duration:4.9s; animation-delay:-3.3s; }
+.waiting .member-feiye img { animation-duration:5.7s; animation-delay:-1.5s; }
+@keyframes hzWaitingBreath { 0%,100%{transform:translateY(0) rotate(0deg) scale(1)} 50%{transform:translateY(-9px) rotate(.12deg) scale(1.006)} }
+
+
+/* ===== 全麦试音：新增模块，不修改原舞台 ===== */
+.audition{position:absolute;inset:0;z-index:25;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s ease;background:radial-gradient(circle at 50% 42%,#303949 0%,#111720 48%,#05070a 86%);overflow:hidden}
+.audition.show{opacity:1;visibility:visible}
+.audition-title{position:absolute;top:9%;width:100%;text-align:center;z-index:40}.audition-title .en{font-size:29px;letter-spacing:13px}.audition-title .cn{margin-top:12px;font-size:13px;letter-spacing:8px;opacity:.62}
+.audition-portrait{position:absolute;left:8%;bottom:0;width:46%;height:82%;object-fit:contain;object-position:center bottom;filter:brightness(1.02) drop-shadow(0 0 38px rgba(225,238,255,.30))}
+.audition-info{position:absolute;right:10%;top:42%;width:36%;transform:translateY(-50%);text-align:center}.audition-diamond{width:54px;height:54px;margin:0 auto 28px;transform:rotate(45deg);border:1px solid rgba(245,250,255,.75);box-shadow:0 0 35px rgba(225,240,255,.28),inset 0 0 20px rgba(255,255,255,.10)}
+.audition-name{font-size:42px;letter-spacing:12px;text-shadow:0 0 24px rgba(235,245,255,.35)}.audition-status{margin-top:20px;font-size:12px;letter-spacing:5px;opacity:.52}.audition-wave{margin:30px auto 0;width:220px;height:42px;display:flex;align-items:center;justify-content:center;gap:6px}.audition-wave i{display:block;width:2px;height:12px;background:rgba(245,250,255,.65);animation:auditionWave .8s ease-in-out infinite alternate}.audition-wave i:nth-child(2){animation-delay:.15s}.audition-wave i:nth-child(3){animation-delay:.3s}.audition-wave i:nth-child(4){animation-delay:.45s}.audition-wave i:nth-child(5){animation-delay:.6s}@keyframes auditionWave{to{height:38px;opacity:1}}
+
+
+
+/* =========================================================
+   本曲谢榜 + 今日谢榜
+========================================================= */
+.settlement-screen{position:fixed;inset:0;z-index:880;display:none;padding:7vh 7vw 6vh;overflow:auto;color:#fff;background:radial-gradient(circle at 50% 25%,rgba(115,145,190,.18),transparent 32%),linear-gradient(145deg,#121823,#070a0f 58%,#020304)}
+.settlement-screen.show{display:block}.settlement-head{text-align:center;margin-bottom:34px}.settlement-en{font-size:12px;letter-spacing:8px;opacity:.42}.settlement-title{margin-top:12px;font-size:32px;letter-spacing:10px}.settlement-sub{margin-top:10px;font-size:12px;letter-spacing:4px;opacity:.5}
+.settlement-card{max-width:1120px;margin:0 auto;padding:28px 32px;border-radius:22px;border:1px solid rgba(235,245,255,.14);background:rgba(255,255,255,.035);box-shadow:0 24px 90px rgba(0,0,0,.38)}
+.songend-top{display:grid;grid-template-columns:210px 1fr;gap:34px;align-items:center}.songend-img{width:210px;height:280px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 28px rgba(225,238,255,.22))}
+.songend-singer{font-size:30px;letter-spacing:7px}.songend-song{margin-top:12px;font-size:22px}.songend-meta{margin-top:10px;font-size:13px;opacity:.55;letter-spacing:2px}.songend-heart{margin-top:20px;font-size:42px}
+.settle-section{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}.settle-section-title{font-size:11px;letter-spacing:5px;opacity:.42;margin-bottom:12px}
+.contrib-row,.giver-row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:14px}
+.stats-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}.stats-number{padding:18px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.stats-number strong{display:block;font-size:30px}.stats-number span{display:block;margin-top:6px;font-size:10px;letter-spacing:3px;opacity:.4}
+.stats-song-list{display:grid;gap:10px}.stats-song{display:grid;grid-template-columns:90px minmax(180px,1fr) 170px 120px;gap:16px;align-items:center;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.022)}
+.stats-song-singer{font-weight:600;letter-spacing:2px}.stats-song-name{font-size:15px}.stats-song-requester{font-size:11px;opacity:.5}.stats-song-heart{text-align:right;font-size:17px}.empty-settle{text-align:center;padding:28px;opacity:.35}
+
+
+
+/* =========================================================
+   直播窗口安全边距版：全员待机整体内缩，避免左右人物被窗口裁切
+   仅调整待机十四人横向站位，不影响演唱/谢榜/统计/试音逻辑
+========================================================= */
+.member-feiye { left: 2.5%; }
+.member-kongbai { left: 8.2%; }
+.member-zeyou { left: 13.9%; }
+.member-qingjue { left: 19.8%; }
+.member-yiyang { left: 25.7%; }
+.member-fang { left: 31.8%; }
+.member-wu { left: 38.0%; }
+.member-shayi { left: 44.0%; }
+.member-qinian { left: 53.0%; }
+.member-ai { left: 59.2%; }
+.member-jinxun { left: 65.4%; }
+.member-beibei { left: 71.6%; }
+.member-lajiaoyou { left: 78.0%; }
+.member-qibaiwan { left: 85.0%; }
+
+</style>
+
+</head>
+
+
+<body class="level0">
+
+
+<!-- =========================================================
+     开启投屏
+========================================================= -->
+
+<div
+    class="start-screen"
+    id="startScreen">
+
+    <div class="start-card">
+
+        <div class="start-diamond"></div>
+
+        <div class="start-logo">
+            HUI ZUAN
+        </div>
+
+        <div class="start-sub">
+            LIVE STAGE SYSTEM
+        </div>
+
+        <button
+            class="start-btn"
+            onclick="enableStage()">
+
+            开启投屏
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     左上品牌
+========================================================= -->
+
+<div class="brand">
+
+    HUI ZUAN
+
+    <div class="brand-small">
+        CLUB
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     全员待机
+========================================================= -->
+
+<div
+    class="waiting"
+    id="waiting">
+
+
+    <div class="waiting-ring"></div>
+
+    <div class="waiting-floor"></div>
+
+
+    <div class="waiting-title">
+
+        <div class="waiting-en">
+            HUI ZUAN CLUB
+        </div>
+
+        <div class="waiting-cn">
+            灰钻 · 全员待机
+        </div>
+
+        <div class="waiting-small">
+            WAITING FOR SONG
+        </div>
+
+    </div>
+
+
+    <!-- 01 遇见 -->
+
+    <div class="member member-feiye">
+
+        <img
+            src="images/yujian.png"
+            alt="遇见">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                遇见
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 02 空白 -->
+
+    <div class="member member-kongbai">
+
+        <img
+            src="images/kongbai.png"
+            alt="空白">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                空白
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 03 泽攸 -->
+
+    <div class="member member-zeyou">
+
+        <img
+            src="images/zeyou.png"
+            alt="泽攸">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                泽攸
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 04 青决 -->
+
+    <div class="member member-qingjue">
+
+        <img
+            src="images/qingjue.png"
+            alt="青决">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                青决
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 05 弋阳 -->
+
+    <div class="member member-yiyang">
+
+        <img
+            src="images/yiyang.png"
+            alt="弋阳">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                弋阳
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 06 防 -->
+
+    <div class="member member-fang">
+
+        <img
+            src="images/fang.png"
+            alt="防">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                防
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 07 雾 -->
+
+    <div class="member member-wu">
+
+        <img
+            src="images/wu.png"
+            alt="雾">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                雾
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 08 鲨熠 C位 -->
+
+    <div class="member member-shayi">
+
+        <img
+            src="images/shayi.png"
+            alt="鲨熠">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                鲨熠
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 09 祈年 -->
+
+    <div class="member member-qinian">
+
+        <img
+            src="images/qinian.png"
+            alt="祈年">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                祈年
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 10 艾 -->
+
+    <div class="member member-ai">
+
+        <img
+            src="images/ai.png"
+            alt="艾">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                艾
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 11 宸御 -->
+
+    <div class="member member-jinxun">
+
+        <img
+            src="images/jinxun.png"
+            alt="宸御">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                宸御
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 12 北北 -->
+
+    <div class="member member-beibei">
+
+        <img
+            src="images/beibei.png"
+            alt="北北">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                北北
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 13 辣椒油 -->
+
+    <div class="member member-lajiaoyou">
+
+        <img
+            src="images/lajiaoyou.png"
+            alt="辣椒油">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                辣椒油
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+    <!-- 14 七百万 -->
+
+    <div class="member member-qibaiwan">
+
+        <img
+            src="images/qibaiwan.png"
+            alt="七百万">
+
+        <div class="member-name">
+
+            <span class="name-text">
+                七百万
+            </span>
+
+            <i class="name-line"></i>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- 全麦试音：独立投屏模式 -->
+<div class="audition" id="audition">
+  <div class="audition-title"><div class="en">HUI ZUAN CLUB</div><div class="cn">灰钻 · 全麦试音</div></div>
+  <img class="audition-portrait" id="auditionCharacter" src="images/wu.png" alt="试音主持">
+  <div class="audition-info"><div class="audition-diamond"></div><div class="audition-name" id="auditionName">雾</div><div class="audition-status" id="auditionStatus">正在试听</div><div class="audition-wave"><i></i><i></i><i></i><i></i><i></i></div></div>
+</div>
+
+<!-- =========================================================
+     演唱舞台
+========================================================= -->
+
+<div
+    class="performance"
+    id="performance">
+
+
+    <div class="spotlight"></div>
+
+
+    <!-- 珠宝舞台 -->
+
+    <div class="gem-stage">
+
+        <div class="main-diamond"></div>
+
+        <div class="gem-orbit orbit-one"></div>
+
+        <div class="gem-orbit orbit-two"></div>
+
+        <div class="gem-orbit orbit-three"></div>
+
+        <div class="jewel-crown"></div>
+
+        <div class="jewel-chain chain-left"></div>
+
+        <div class="jewel-chain chain-right"></div>
+
+        <div class="crystal crystal-1"></div>
+
+        <div class="crystal crystal-2"></div>
+
+        <div class="crystal crystal-3"></div>
+
+        <div class="crystal crystal-4"></div>
+
+    </div>
+
+
+    <!-- 粒子 -->
+
+    <div class="particles">
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+        <div class="particle"></div>
+
+    </div>
+
+
+    <!-- 当前歌手 -->
+
+    <div class="character-wrap">
+
+        <img
+            src="images/shayi.png"
+            id="character"
+            class="character"
+            alt="当前歌手">
+
+    </div>
+
+
+    <!-- 右侧资料 -->
+
+    <div class="info">
+
+
+        <div
+            class="stage-name"
+            id="stageName">
+
+            ◇ 基础舞台
+
+        </div>
+
+
+        <div
+            class="singer"
+            id="singer">
+
+            鲨熠
+
+        </div>
+
+
+        <div
+            class="song"
+            id="song">
+
+            《等待点歌》
+
+        </div>
+
+
+        <div
+            class="requester"
+            id="requester">
+
+            点歌人 · —
+
+        </div>
+
+
+        <div class="heart-label">
+
+            HEART STAGE
+
+        </div>
+
+
+        <div
+            class="heart"
+            id="heart">
+
+            ♡ 0
+
+        </div>
+
+
+        <div class="progress-box">
+
+
+            <div class="progress-bg">
+
+                <div
+                    class="progress"
+                    id="progress">
+                </div>
+
+            </div>
+
+
+            <div class="range">
+
+                <span id="rangeStart">
+                    0
+                </span>
+
+                <span id="rangeEnd">
+                    1,000
+                </span>
+
+            </div>
+
+
+            <div
+                class="next-stage"
+                id="nextStage">
+
+                距高级舞台还差 ♡1,000
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     舞台升级
+========================================================= -->
+
+<div
+    class="upgrade"
+    id="upgrade">
+
+
+    <div class="upgrade-light"></div>
+
+
+    <div class="upgrade-orbit"></div>
+
+
+    <div class="upgrade-diamond">
+
+
+        <div class="upgrade-content">
+
+            <div class="upgrade-en">
+
+                STAGE UP
+
+            </div>
+
+
+            <div
+                class="upgrade-cn"
+                id="upgradeText">
+
+                高级舞台
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+<!-- 本曲谢榜 -->
+<div class="settlement-screen" id="songEndScreen"><div class="settlement-head"><div class="settlement-en">HUI ZUAN CLUB · SONG SETTLEMENT</div><div class="settlement-title">本曲谢榜</div><div class="settlement-sub">THANK YOU FOR YOUR SUPPORT</div></div><div class="settlement-card" id="songEndContent"></div></div>
+
+<!-- 今日谢榜 -->
+<div class="settlement-screen" id="statsScreen"><div class="settlement-head"><div class="settlement-en">HUI ZUAN CLUB · DAILY REPORT</div><div class="settlement-title">今日谢榜</div><div class="settlement-sub" id="statsDate">TODAY</div></div><div class="settlement-card" id="statsContent"></div></div>
+
+<!-- =========================================================
+     Footer
+========================================================= -->
+
+<div class="footer">
+
+    HUI ZUAN CLUB · LIVE STAGE
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioEnabled = false;
+
+let audioContext = null;
+
+let lastLevel = null;
+
+let lastMode = null;
+
+
+/* =========================================================
+   开启投屏
+========================================================= */
+
+function enableStage() {
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+
+    audioEnabled = true;
+
+
+    document
+        .getElementById(
+            "startScreen"
+        )
+        .style.display =
+        "none";
+
+
+    updateDisplay(true);
+
+}
+
+
+/* =========================================================
+   基础声音
+========================================================= */
+
+function tone(
+    frequency,
+    start,
+    duration,
+    volume,
+    type = "sine"
+) {
+
+    if (
+        !audioEnabled ||
+        !audioContext
+    ) {
+
+        return;
+
+    }
+
+
+    const osc =
+        audioContext
+            .createOscillator();
+
+
+    const gain =
+        audioContext
+            .createGain();
+
+
+    const now =
+        audioContext.currentTime;
+
+
+    osc.type =
+        type;
+
+
+    osc.frequency.value =
+        frequency;
+
+
+    gain.gain
+        .setValueAtTime(
+            .0001,
+            now + start
+        );
+
+
+    gain.gain
+        .exponentialRampToValueAtTime(
+            volume,
+            now + start + .02
+        );
+
+
+    gain.gain
+        .exponentialRampToValueAtTime(
+            .0001,
+            now + start + duration
+        );
+
+
+    osc.connect(
+        gain
+    );
+
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    osc.start(
+        now + start
+    );
+
+
+    osc.stop(
+        now +
+        start +
+        duration +
+        .05
+    );
+
+}
+
+
+/* =========================================================
+   登场音效
+========================================================= */
+
+function playEntrance() {
+
+    tone(
+        220,
+        0,
+        .35,
+        .08
+    );
+
+
+    tone(
+        440,
+        .16,
+        .45,
+        .07
+    );
+
+
+    tone(
+        880,
+        .34,
+        .55,
+        .055
+    );
+
+}
+
+
+/* =========================================================
+   待机音效
+========================================================= */
+
+function playWaiting() {
+
+    tone(
+        520,
+        0,
+        .28,
+        .035
+    );
+
+
+    tone(
+        390,
+        .18,
+        .38,
+        .025
+    );
+
+}
+
+
+/* =========================================================
+   高级舞台音效
+========================================================= */
+
+function playLevel1() {
+
+    tone(
+        523,
+        0,
+        .32,
+        .055
+    );
+
+
+    tone(
+        659,
+        .15,
+        .35,
+        .055
+    );
+
+
+    tone(
+        784,
+        .30,
+        .50,
+        .06
+    );
+
+}
+
+
+/* =========================================================
+   高光舞台音效
+========================================================= */
+
+function playLevel2() {
+
+    tone(
+        392,
+        0,
+        .32,
+        .065
+    );
+
+
+    tone(
+        523,
+        .10,
+        .40,
+        .07
+    );
+
+
+    tone(
+        659,
+        .23,
+        .45,
+        .075
+    );
+
+
+    tone(
+        1046,
+        .42,
+        .65,
+        .06
+    );
+
+}
+
+
+/* =========================================================
+   灰钻舞台音效
+========================================================= */
+
+function playLevel3() {
+
+    tone(
+        196,
+        0,
+        .55,
+        .08,
+        "triangle"
+    );
+
+
+    tone(
+        392,
+        .08,
+        .55,
+        .075
+    );
+
+
+    tone(
+        523,
+        .20,
+        .65,
+        .08
+    );
+
+
+    tone(
+        784,
+        .38,
+        .75,
+        .08
+    );
+
+
+    tone(
+        1046,
+        .58,
+        .95,
+        .07
+    );
+
+
+    tone(
+        1568,
+        .85,
+        1.1,
+        .04
+    );
+
+}
+
+
+/* =========================================================
+   读取资料
+========================================================= */
+
+function getData() {
+
+    return (
+
+        JSON.parse(
+
+            localStorage.getItem(
+                "huizuanData"
+            )
+
+        )
+
+        ||
+
+        {
+
+            mode:
+                "waiting",
+
+            singer:
+                "鲨熠",
+
+            song:
+                "",
+
+            requester:
+                "",
+
+            heart:
+                0,
+
+            character:
+                "images/shayi.png",
+
+            eventId:
+                0
+
+        }
+
+    );
+
+}
+
+
+/* =========================================================
+   判断等级
+========================================================= */
+
+function getLevel(value) {
+
+    if (
+        value >= 10000
+    ) {
+
+        return 3;
+
+    }
+
+
+    if (
+        value >= 5000
+    ) {
+
+        return 2;
+
+    }
+
+
+    if (
+        value >= 1000
+    ) {
+
+        return 1;
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   更新投屏
+========================================================= */
+
+
+/* ===== 全麦试音音频 ===== */
+let auditionAudio = null;
+let lastAuditionEventId = null;
+function stopAuditionAudio(){ if(auditionAudio){ auditionAudio.pause(); auditionAudio.currentTime=0; auditionAudio=null; } }
+function playAuditionAudio(data){
+  stopAuditionAudio();
+  if(!data.voice){ document.getElementById("auditionStatus").innerText="试音音频待上传"; return; }
+  auditionAudio=new Audio(data.voice);
+  auditionAudio.play().then(()=>{document.getElementById("auditionStatus").innerText="正在试听";}).catch(()=>{document.getElementById("auditionStatus").innerText="请先点击开启投屏";});
+}
+
+
+
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));}
+function hideSettlementScreens(){document.getElementById("songEndScreen").classList.remove("show");document.getElementById("statsScreen").classList.remove("show");}
+function renderSongEnd(data){
+ const r=data.finalRecord||data, entries=Object.entries(r.contributions||{}).sort((a,b)=>Number(b[1])-Number(a[1]));
+ const rows=entries.length?entries.map(([n,v])=>`<div class="contrib-row"><span>${escapeHtml(n)}</span><strong>♡ ${Number(v||0).toLocaleString()}</strong></div>`).join(""):`<div class="empty-settle">本曲暂无礼物记录</div>`;
+ document.getElementById("songEndContent").innerHTML=`<div class="songend-top"><img class="songend-img" src="${escapeHtml(r.character||"images/shayi.png")}" alt="演唱者"><div><div class="songend-singer">${escapeHtml(r.singer||"—")}</div><div class="songend-song">《${escapeHtml(r.song||"—")}》</div><div class="songend-meta">点歌人 · ${escapeHtml(r.requester||"—")}</div><div class="songend-heart">♡ ${Number(r.heart||0).toLocaleString()}</div></div></div><div class="settle-section"><div class="settle-section-title">本曲贡献谢榜 · THANKS</div>${rows}</div>`;
+ document.getElementById("songEndScreen").classList.add("show");
+}
+function renderStats(data){
+ const records=Array.isArray(data.records)?data.records:[];
+ const songs=records.length?records.map((r,i)=>`<div class="stats-song"><div class="stats-song-singer">${escapeHtml(r.singer||"—")}</div><div><div class="stats-song-name">${String(i+1).padStart(2,"0")} · 《${escapeHtml(r.song||"—")}》</div><div class="stats-song-requester">点歌人 · ${escapeHtml(r.requester||"—")}</div></div><div class="stats-song-requester">${escapeHtml(r.startedAt||"")}${r.endedAt?" - "+escapeHtml(r.endedAt):""}</div><div class="stats-song-heart">♡ ${Number(r.heart||0).toLocaleString()}</div></div>`).join(""):`<div class="empty-settle">今天还没有完成的歌曲记录</div>`;
+ const givers=Array.isArray(data.giverStats)&&data.giverStats.length?data.giverStats.map((g,i)=>`<div class="giver-row"><span>${i+1}. ${escapeHtml(g.name)}</span><strong>♡ ${Number(g.value||0).toLocaleString()}</strong></div>`).join(""):`<div class="empty-settle">今日暂无贡献记录</div>`;
+ document.getElementById("statsDate").innerText=data.date||"TODAY";
+ document.getElementById("statsContent").innerHTML=`<div class="stats-summary"><div class="stats-number"><strong>${Number(data.totalSongs??records.length).toLocaleString()}</strong><span>今日完成歌曲</span></div><div class="stats-number"><strong>♡ ${Number(data.totalHeart||0).toLocaleString()}</strong><span>今日总心动值</span></div></div><div class="settle-section"><div class="settle-section-title">今日全部演唱歌曲 · ALL SONGS</div><div class="stats-song-list">${songs}</div></div><div class="settle-section"><div class="settle-section-title">今日总贡献 · SUPPORT RANKING</div>${givers}</div>`;
+ document.getElementById("statsScreen").classList.add("show");
+}
+
+function updateDisplay(
+    initial = false
+) {
+
+    const data =
+        getData();
+
+
+    const mode =
+        data.mode ||
+        "waiting";
+
+
+    const heartValue =
+        Number(
+            data.heart
+        ) || 0;
+
+
+    const level =
+        getLevel(
+            heartValue
+        );
+
+    /* 全麦试音独立模式 */
+    const auditionEl=document.getElementById("audition");
+    if(mode === "audition"){
+        document.getElementById("waiting").classList.add("hide");
+        document.getElementById("performance").classList.remove("show");
+        auditionEl.classList.add("show");
+        document.getElementById("auditionCharacter").src=data.character || "";
+        document.getElementById("auditionName").innerText=data.singer || "";
+        if(!initial && lastAuditionEventId !== data.eventId){ lastAuditionEventId=data.eventId; playAuditionAudio(data); }
+        lastMode="audition"; lastLevel=null; return;
+    }
+    auditionEl.classList.remove("show");
+    if(lastMode === "audition") stopAuditionAudio();
+
+    hideSettlementScreens();
+
+    /* 本曲谢榜 */
+    if (mode === "songEnd") {
+        document.getElementById("waiting").classList.add("hide");
+        document.getElementById("performance").classList.remove("show");
+        renderSongEnd(data);
+        lastMode = "songEnd";
+        lastLevel = null;
+        return;
+    }
+
+    /* 今日谢榜 */
+    if (mode === "stats") {
+        document.getElementById("waiting").classList.add("hide");
+        document.getElementById("performance").classList.remove("show");
+        renderStats(data);
+        lastMode = "stats";
+        lastLevel = null;
+        return;
+    }
+
+
+    /* =====================================================
+       全员待机
+    ===================================================== */
+
+    if (
+        mode ===
+        "waiting"
+    ) {
+
+
+        document
+            .getElementById(
+                "waiting"
+            )
+            .classList
+            .remove(
+                "hide"
+            );
+
+
+        document
+            .getElementById(
+                "performance"
+            )
+            .classList
+            .remove(
+                "show"
+            );
+
+
+        if (
+            !initial &&
+            lastMode ===
+            "performance"
+        ) {
+
+            playWaiting();
+
+        }
+
+
+        lastMode =
+            "waiting";
+
+
+        lastLevel =
+            null;
+
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       演唱模式
+    ===================================================== */
+
+    document
+        .getElementById(
+            "waiting"
+        )
+        .classList
+        .add(
+            "hide"
+        );
+
+
+    document
+        .getElementById(
+            "performance"
+        )
+        .classList
+        .add(
+            "show"
+        );
+
+
+    /* =====================================================
+       登场
+    ===================================================== */
+
+    if (
+        !initial &&
+        lastMode !==
+        "performance"
+    ) {
+
+
+        playEntrance();
+
+
+        const character =
+            document
+                .getElementById(
+                    "character"
+                );
+
+
+        character
+            .classList
+            .remove(
+                "enter"
+            );
+
+
+        void character.offsetWidth;
+
+
+        character
+            .classList
+            .add(
+                "enter"
+            );
+
+    }
+
+
+    /* =====================================================
+       更新人物
+    ===================================================== */
+
+    document
+        .getElementById(
+            "character"
+        )
+        .src =
+
+        data.character ||
+        "images/shayi.png";
+
+
+    /* =====================================================
+       更新歌手
+    ===================================================== */
+
+    document
+        .getElementById(
+            "singer"
+        )
+        .innerText =
+
+        data.singer ||
+        "—";
+
+
+    /* =====================================================
+       更新歌曲
+    ===================================================== */
+
+    document
+        .getElementById(
+            "song"
+        )
+        .innerText =
+
+        "《" +
+
+        (
+            data.song ||
+            "等待点歌"
+        )
+
+        +
+
+        "》";
+
+
+    /* =====================================================
+       更新点歌人
+    ===================================================== */
+
+    document
+        .getElementById(
+            "requester"
+        )
+        .innerText =
+
+        "点歌人 · " +
+
+        (
+            data.requester ||
+            "—"
+        );
+
+
+    /* =====================================================
+       更新心动值
+    ===================================================== */
+
+    document
+        .getElementById(
+            "heart"
+        )
+        .innerText =
+
+        "♡ " +
+
+        heartValue
+            .toLocaleString();
+
+
+    /* =====================================================
+       清除旧等级
+    ===================================================== */
+
+    document.body
+        .classList
+        .remove(
+            "level0",
+            "level1",
+            "level2",
+            "level3"
+        );
+
+
+    /* =====================================================
+       套用新等级
+    ===================================================== */
+
+    document.body
+        .classList
+        .add(
+            "level" +
+            level
+        );
+
+
+    let stageName =
+        "◇ 基础舞台";
+
+
+    let start =
+        0;
+
+
+    let end =
+        1000;
+
+
+    let progress =
+        0;
+
+
+    let nextText =
+        "";
+
+
+    /* =====================================================
+       LEVEL 0
+       0 - 999
+    ===================================================== */
+
+    if (
+        level === 0
+    ) {
+
+
+        stageName =
+            "◇ 基础舞台";
+
+
+        start =
+            0;
+
+
+        end =
+            1000;
+
+
+        progress =
+
+            heartValue /
+            1000 *
+            100;
+
+
+        nextText =
+
+            "距高级舞台还差 ♡" +
+
+            (
+                1000 -
+                heartValue
+            )
+            .toLocaleString();
+
+    }
+
+
+    /* =====================================================
+       LEVEL 1
+       1000 - 4999
+    ===================================================== */
+
+    if (
+        level === 1
+    ) {
+
+
+        stageName =
+            "◇ ✦ 高级舞台";
+
+
+        start =
+            1000;
+
+
+        end =
+            5000;
+
+
+        progress =
+
+            (
+                heartValue -
+                1000
+            )
+
+            /
+
+            4000
+
+            *
+
+            100;
+
+
+        nextText =
+
+            "距高光舞台还差 ♡" +
+
+            (
+                5000 -
+                heartValue
+            )
+            .toLocaleString();
+
+    }
+
+
+    /* =====================================================
+       LEVEL 2
+       5000 - 9999
+    ===================================================== */
+
+    if (
+        level === 2
+    ) {
+
+
+        stageName =
+            "◇ ✦✦ 高光舞台";
+
+
+        start =
+            5000;
+
+
+        end =
+            10000;
+
+
+        progress =
+
+            (
+                heartValue -
+                5000
+            )
+
+            /
+
+            5000
+
+            *
+
+            100;
+
+
+        nextText =
+
+            "距灰钻舞台还差 ♡" +
+
+            (
+                10000 -
+                heartValue
+            )
+            .toLocaleString();
+
+    }
+
+
+    /* =====================================================
+       LEVEL 3
+       10000+
+    ===================================================== */
+
+    if (
+        level === 3
+    ) {
+
+
+        stageName =
+            "♢ ✦ 灰钻舞台 ✦ ♢";
+
+
+        start =
+            10000;
+
+
+        end =
+            "MAX";
+
+
+        progress =
+            100;
+
+
+        nextText =
+            "HUI ZUAN · MAX";
+
+    }
+
+
+    /* =====================================================
+       限制进度
+    ===================================================== */
+
+    progress =
+        Math.max(
+
+            0,
+
+            Math.min(
+                100,
+                progress
+            )
+
+        );
+
+
+    /* =====================================================
+       更新舞台名称
+    ===================================================== */
+
+    document
+        .getElementById(
+            "stageName"
+        )
+        .innerText =
+        stageName;
+
+
+    /* =====================================================
+       更新范围
+    ===================================================== */
+
+    document
+        .getElementById(
+            "rangeStart"
+        )
+        .innerText =
+
+        Number(
+            start
+        )
+        .toLocaleString();
+
+
+    document
+        .getElementById(
+            "rangeEnd"
+        )
+        .innerText =
+
+        typeof end ===
+        "number"
+
+        ?
+
+        end.toLocaleString()
+
+        :
+
+        end;
+
+
+    /* =====================================================
+       更新进度条
+    ===================================================== */
+
+    document
+        .getElementById(
+            "progress"
+        )
+        .style.width =
+
+        progress +
+        "%";
+
+
+    /* =====================================================
+       更新下一级
+    ===================================================== */
+
+    document
+        .getElementById(
+            "nextStage"
+        )
+        .innerText =
+        nextText;
+
+
+    /* =====================================================
+       真正跨级才播放动画
+    ===================================================== */
+
+    if (
+        lastLevel !== null &&
+        level > lastLevel
+    ) {
+
+
+        if (
+            level === 1
+        ) {
+
+            showUpgrade(
+                "高级舞台"
+            );
+
+
+            playLevel1();
+
+        }
+
+
+        if (
+            level === 2
+        ) {
+
+            showUpgrade(
+                "高光舞台"
+            );
+
+
+            playLevel2();
+
+        }
+
+
+        if (
+            level === 3
+        ) {
+
+            showUpgrade(
+                "灰钻舞台"
+            );
+
+
+            playLevel3();
+
+        }
+
+    }
+
+
+    lastLevel =
+        level;
+
+
+    lastMode =
+        "performance";
+
+}
+
+
+/* =========================================================
+   升级动画
+========================================================= */
+
+function showUpgrade(text) {
+
+    const upgrade =
+        document
+            .getElementById(
+                "upgrade"
+            );
+
+
+    document
+        .getElementById(
+            "upgradeText"
+        )
+        .innerText =
+        text;
+
+
+    upgrade
+        .classList
+        .remove(
+            "play"
+        );
+
+
+    void upgrade.offsetWidth;
+
+
+    upgrade
+        .classList
+        .add(
+            "play"
+        );
+
+}
+
+
+/* =========================================================
+   control.html 同步
+========================================================= */
+
+window.addEventListener(
+
+    "storage",
+
+    function(event) {
+
+
+        if (
+            event.key ===
+            "huizuanData"
+        ) {
+
+            updateDisplay(
+                false
+            );
+
+        }
+
+    }
+
+);
+
+
+/* =========================================================
+   第一次载入
+========================================================= */
+
+updateDisplay(
+    true
+);
+
+</script>
+
+
+
+
+<!-- =========================================================
+     投屏满版适配补丁
+     设计基准：1920 × 1080（16:9）
+     使用 cover 方式铺满浏览器画面，避免左右黑边；
+     极端比例下会轻微裁切边缘，不会把人物拉胖。
+========================================================= -->
+<style id="projection-cover-patch">
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #05070a;
+}
+body {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 1920px !important;
+    height: 1080px !important;
+    min-width: 1920px !important;
+    min-height: 1080px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    transform-origin: center center !important;
+}
+
+/* ===== 待机主持姓名：30px 直式 ===== */
+.waiting .name-text {
+    font-size: 30px !important;
+    font-weight: 600 !important;
+    letter-spacing: 2px !important;
+    line-height: 1.05 !important;
+    writing-mode: vertical-rl !important;
+    text-orientation: upright !important;
+    white-space: nowrap !important;
+    padding: 0 0 12px !important;
+}
+.waiting .name-text::before {
+    display: block !important;
+    margin: 0 0 8px 0 !important;
+    font-size: 12px !important;
+}
+.waiting .member-shayi .name-text {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+}
+.waiting .member-name {
+    align-items: center !important;
+}
+
+/* 鲨熠待机名字微调：下移避免顶部裁切 */
+.member-shayi .member-name {
+    transform: translateX(-50%) translateY(-18px) !important;
+}
+</style>
+<script>
+(function () {
+    function fitProjectionCover() {
+        var baseW = 1920;
+        var baseH = 1080;
+        var vw = window.innerWidth || document.documentElement.clientWidth;
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+
+        // cover：完整铺满窗口，不留左右/上下黑边。
+        var scale = Math.max(vw / baseW, vh / baseH);
+        document.body.style.transform =
+            'translate(-50%, -50%) scale(' + scale + ')';
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fitProjectionCover);
+    } else {
+        fitProjectionCover();
+    }
+    window.addEventListener('resize', fitProjectionCover);
+})();
+</script>
+<script>
+/* HUI ZUAN V3.3 waiting-position manager */
+(function(){
+ const KEY='huizuan_waiting_positions_v1';
+ const defs=[
+  ['member-feiye','遇见'],['member-kongbai','空白'],['member-zeyou','泽攸'],['member-qingjue','青决'],
+  ['member-yiyang','弋阳'],['member-fang','防'],['member-wu','雾'],['member-shayi','鲨熠'],
+  ['member-qinian','祈年'],['member-ai','艾'],['member-jinxun','宸御'],['member-beibei','北北'],
+  ['member-lajiaoyou','辣椒油'],['member-qibaiwan','七百万']
+ ];
+ const slots=[
+  {left:'-2.5%',width:'10%',height:'48%',z:10},{left:'4%',width:'10.5%',height:'52%',z:12},
+  {left:'10.5%',width:'11%',height:'56%',z:14},{left:'17%',width:'11.5%',height:'60%',z:17},
+  {left:'23.5%',width:'12%',height:'64%',z:22},{left:'30.3%',width:'11.5%',height:'68%',z:31},
+  {left:'37.1%',width:'12%',height:'73%',z:40},{left:'44%',width:'15%',height:'87%',z:60},
+  {left:'53.5%',width:'12%',height:'73%',z:41},{left:'60.8%',width:'11.5%',height:'68%',z:30},
+  {left:'67.8%',width:'11.5%',height:'64%',z:24},{left:'74.8%',width:'11.5%',height:'60%',z:26},
+  {left:'81.8%',width:'11%',height:'55%',z:18},{left:'89%',width:'10.5%',height:'50%',z:15}
+ ];
+ function load(){try{const a=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(a)&&a.length===defs.length)return a}catch(e){}return defs.map(x=>x[0])}
+ function apply(){const order=load();order.forEach((cls,i)=>{const el=document.querySelector('.waiting .'+cls);if(!el||!slots[i])return;const q=slots[i];el.style.left=q.left;el.style.width=q.width;el.style.height=q.height;el.style.zIndex=q.z;const img=el.querySelector('img');if(img){if(i===7){img.style.filter='brightness(1.02) drop-shadow(0 0 30px rgba(235,245,255,.28))';}else{img.style.removeProperty('filter');}}});}
+ window.addEventListener('storage',e=>{if(e.key===KEY)apply()});
+ document.addEventListener('DOMContentLoaded',apply); apply();
+})();
+</script>
+</body>
+
+</html>

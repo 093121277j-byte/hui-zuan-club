@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUI ZUAN CLUB｜展馆控制台 V5</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Microsoft YaHei",system-ui,sans-serif;background:#080b12;color:#f4f0e7}
+header{padding:20px 26px;border-bottom:1px solid #292f3a;background:#0d111a;display:flex;justify-content:space-between;align-items:center}
+.brand{letter-spacing:5px;font-weight:800}.sub,.muted{color:#9da3ae}.sub{font-size:12px;margin-top:5px;letter-spacing:2px}
+.status{font-size:13px;border:1px solid #39414e;border-radius:999px;padding:7px 12px}.weekBadge{display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;font-size:11px;border:1px solid #3d4655;color:#b8c0cc}.weekBadge.current{border-color:#d9d3c5;color:#fff;box-shadow:0 0 12px rgba(255,255,255,.12)}.weekBadge.past{opacity:.7}.weekBadge.future{color:#c7cfdb}
+main{max-width:1320px;margin:auto;padding:24px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+select,input,button{background:#121823;color:#f4f0e7;border:1px solid #353d4b;border-radius:10px;padding:10px 13px;font-size:14px}
+button{cursor:pointer}button:hover{background:#1b2331}button:disabled{opacity:.4;cursor:not-allowed}
+.sisterbox{display:flex;gap:9px;flex-wrap:wrap;padding:14px;border:1px solid #2d3440;border-radius:14px;margin-bottom:18px;background:#0d121b}
+.summary{padding:18px 20px;border:1px solid #34343d;border-radius:17px;margin-bottom:18px;background:linear-gradient(135deg,#111722,#18131a)}
+.summary h1{margin:0 0 7px;font-size:25px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card{background:#11161f;border:1px solid #2c3440;border-radius:16px;padding:15px;min-height:170px;transition:.2s}
+.card.done{border-color:#8d897e;box-shadow:0 0 20px rgba(255,255,255,.1)}
+.name{font-weight:700}.num{font-size:25px;font-weight:800;margin:15px 0 8px}.bar{height:6px;background:#292f39;border-radius:10px;overflow:hidden}
+.fill{height:100%;background:#d9d3c5}.contributors{min-height:34px;margin-top:11px;color:#d7d1c4;font-size:13px;line-height:1.6}.contributors .none{color:#747b86}.actions{display:flex;gap:8px;margin-top:10px}.actions button{flex:1;font-size:16px;font-weight:700}
+.toast{position:fixed;right:22px;bottom:22px;background:#171d27;border:1px solid #424a58;padding:12px 16px;border-radius:12px;display:none;max-width:330px}
+.empty{grid-column:1/-1;text-align:center;padding:50px;border:1px dashed #343b46;border-radius:16px;color:#969ca7}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="brand">HUI ZUAN CLUB</div><div class="sub">展馆控制台 · CONTROL V13</div></div>
+  <div id="status" class="status">连接中…</div>
+</header>
+
+<main>
+<section class="panel">
+  <div class="toolbar">
+    <select id="week"><option value="">载入周期中…</option></select>
+    <select id="host"><option value="">载入哥哥中…</option></select>
+    <select id="galleryType">
+      <option value="12">基础展馆 12馆</option>
+      <option value="20">进阶展馆 20馆</option>
+      <option value="24">经典展馆 24馆</option>
+      <option value="28">甄选展馆 28馆</option>
+    </select>
+    <button id="createGallery">建立/载入展馆</button>
+    <button id="changeGalleryType" class="secondary">🔄 更换馆型</button>
+    <button id="refresh">刷新数据</button>
+    <button id="switchScreen">📺 切换投屏</button>
+    <button id="resumeScreen">🔄 恢复自动轮播</button>
+  </div>
+
+  <div class="toolbar" style="margin-top:12px">
+    <select id="sister"><option value="">选择姐姐</option></select>
+    <input id="newSister" placeholder="输入新姐姐昵称">
+    <button id="addSister">＋ 新增姐姐</button>
+    <button id="renameSister">修改昵称</button>
+    <button id="deleteSister">删除姐姐</button>
+    <button id="assignSister">加入当前哥哥</button>
+    <button id="removeSister">移出当前哥哥</button>
+  </div>
+</section>
+
+<div id="operation" style="margin:14px 0;padding:12px 14px;border:1px solid #343b47;border-radius:12px;background:#151a22;font-weight:700">
+当前操作：载入中…
+</div>
+
+<section id="summary" class="summary" hidden>
+  <div><b id="hostName"></b><span id="weekName"></span></div>
+  <div><b id="galleryName"></b>　完成 <b id="done">0</b>/<span id="total">0</span></div>
+  <button id="fillAll">⚡ 一键点亮全部空缺</button>
+  <button id="undoLast">↩ 撤销上一步</button>
+</section>
+
+<div id="grid" class="grid"></div>
+</main>
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db=supabase.createClient("https://ossaeaswzzfrekguefkh.supabase.co","sb_publishable_xxEoSgJZGaNrLmJnr1gtng_Xoxnd_Nn");
+const $=id=>document.getElementById(id);
+const galleryNames={12:"基础展馆",20:"进阶展馆",24:"经典展馆",28:"甄选展馆"};
+let hosts=[],weeks=[],sisters=[],gallery=null,items=[],busy=false,currentWeekId=null;
+
+
+function utc8DateString(){
+ const now=new Date();
+ const utc8=new Date(now.getTime()+8*60*60*1000);
+ return `${utc8.getUTCFullYear()}-${String(utc8.getUTCMonth()+1).padStart(2,"0")}-${String(utc8.getUTCDate()).padStart(2,"0")}`;
+}
+function weekState(w){
+ const today=utc8DateString();
+ if(w.start_date<=today && today<=w.end_date)return "current";
+ if(w.end_date<today)return "past";
+ return "future";
+}
+function isCurrentWeek(){return selectedWeek() && weekState(selectedWeek())==="current"}
+function isPastWeek(){return selectedWeek() && weekState(selectedWeek())==="past"}
+function isFutureWeek(){return selectedWeek() && weekState(selectedWeek())==="future"}
+function guardCurrentWeek(action="进行点亮操作"){
+ const w=selectedWeek();
+ if(!w){toast("请先选择周次");return false}
+ const s=weekState(w);
+ if(s==="past"){toast(`过去周次已锁定，不能${action}`);return false}
+ if(s==="future"){toast(`未来周次只能提前建立展馆，不能${action}`);return false}
+ return true;
+}
+function applyWeekPermissions(){
+ const w=selectedWeek(),state=w?weekState(w):null;
+ const lockOps=state!=="current";
+ ["fillAll","undoLast"].forEach(id=>{if($(id))$(id).disabled=lockOps});
+ // 未来周允许建馆；过去周禁止建馆。
+ $("createGallery").disabled=state==="past";
+ $("changeGalleryType").disabled=state==="past";
+ document.querySelectorAll(".actions button").forEach(b=>b.disabled=lockOps || b.dataset.done==="1");
+}
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";clearTimeout(window.__tt);window.__tt=setTimeout(()=>$("toast").style.display="none",2600)}
+function err(e){
+ console.error(e);
+ const msg=e?.message||e?.details||e?.hint||String(e||"未知错误");
+ $("status").textContent="操作失败 · "+msg;
+ toast("错误："+msg)
+}
+function selectedHost(){return hosts.find(x=>+x.id===+$("host").value)}
+function selectedWeek(){return weeks.find(x=>+x.id===+$("week").value)}
+function selectedSister(){return sisters.find(x=>+x.id===+$("sister").value)}
+function updateOperation(){
+ const w=selectedWeek(),h=selectedHost();
+ let s=`当前操作：${w?.week_name||"未选周次"}｜${h?.name||"未选哥哥"}`;
+ if(gallery)s+=`｜${galleryNames[gallery.gallery_size]||"展馆"} ${gallery.gallery_size}馆`;
+ const state=w?weekState(w):null;
+ s+=state==="current"?"｜✦ 本周可操作":state==="past"?"｜🔒 已结束 · 仅查看":"｜◇ 未来周 · 可建馆，不可点亮";
+ $("operation").textContent=s;
+}
+
+async function loadHosts(){
+ const r=await db.from("hosts").select("*").eq("is_active",true).order("sort_order");
+ if(r.error)throw r.error;hosts=r.data||[];
+ $("host").innerHTML=hosts.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+}
+async function loadWeeks(){
+ const r=await db.from("weeks").select("*").order("start_date",{ascending:false});
+ if(r.error)throw r.error;weeks=r.data||[];
+ const today=utc8DateString();
+ const current=weeks.find(w=>w.start_date<=today&&today<=w.end_date);
+ currentWeekId=current?.id||null;
+ $("week").innerHTML=weeks.map(w=>{
+   const state=weekState(w);
+   const tag=state==="current"?"✦ 本周":state==="past"?"🔒 已结束":"◇ 未来";
+   return `<option value="${w.id}" ${current&&+w.id===+current.id?"selected":""}>${esc(w.week_name)}　${tag}</option>`;
+ }).join("");
+ if(current)$("week").value=String(current.id);
+ else if(weeks.length)$("week").value=String(weeks[0].id);
+}
+async function loadSisters(selected){
+ const hostId=+$("host").value;
+ sisters=[];
+ if(!hostId){$("sister").innerHTML='<option value="">请先选择哥哥</option>';return}
+ const links=await db.from("host_sisters").select("sister_id").eq("host_id",hostId);
+ if(links.error)throw links.error;
+ const ids=(links.data||[]).map(x=>x.sister_id);
+ if(!ids.length){$("sister").innerHTML='<option value="">当前哥哥暂无姐姐</option>';return}
+ const r=await db.from("sisters").select("*").in("id",ids).eq("is_active",true).order("id");
+ if(r.error)throw r.error;sisters=r.data||[];
+ $("sister").innerHTML='<option value="">选择姐姐</option>'+sisters.map(x=>`<option value="${x.id}">${esc(x.nickname)}</option>`).join("");
+ if(selected && sisters.some(x=>+x.id===+selected))$("sister").value=String(selected);
+}
+async function loadGallery(){
+ const hostId=+$("host").value,weekId=+$("week").value;
+ gallery=null;items=[];updateOperation();
+ if(!hostId||!weekId){$("summary").hidden=true;$("grid").innerHTML="";return}
+ const g=await db.from("host_galleries").select("*").eq("host_id",hostId).eq("week_id",weekId).maybeSingle();
+ if(g.error)throw g.error;
+ gallery=g.data;
+ updateOperation();
+ if(!gallery){
+   $("summary").hidden=true;
+   $("grid").innerHTML='<div class="empty">该哥哥在这个周次还没有展馆。请选择馆型后点击「建立/载入展馆」。</div>';
+   return;
+ }
+ $("galleryType").value=String(gallery.gallery_size);
+ const r=await db.from("gallery_items").select("*").eq("gallery_id",gallery.id).order("sort_order");
+ if(r.error)throw r.error;items=r.data||[];
+ const ids=items.map(x=>x.id),contrib={};
+ if(ids.length){
+  const lr=await db.from("light_records").select("gallery_item_id,quantity,sister_id,sisters(nickname)").in("gallery_item_id",ids).order("id");
+  if(lr.error)throw lr.error;
+  for(const rec of lr.data||[]){
+   const nick=rec.sisters?.nickname||"未知姐姐",id=rec.gallery_item_id;
+   contrib[id] ||= {};contrib[id][nick]=(contrib[id][nick]||0)+Number(rec.quantity||1);
+  }
+ }
+ items=items.map(x=>({...x,_contributors:contrib[x.id]||{}}));render();
+}
+function render(){
+ $("summary").hidden=false;
+ $("hostName").textContent=selectedHost()?.name||"";
+ $("weekName").textContent=selectedWeek()?.week_name||"";
+ $("galleryName").textContent=`${galleryNames[gallery.gallery_size]||"展馆"} ${gallery.gallery_size}馆`;
+ $("total").textContent=items.length;
+ $("done").textContent=items.filter(x=>x.current_count>=x.target_count).length;
+ $("grid").innerHTML=items.map(x=>{
+  const done=x.current_count>=x.target_count,pct=Math.min(100,x.target_count?x.current_count/x.target_count*100:0);
+  const cs=Object.entries(x._contributors||{});
+  const who=cs.length?cs.map(([n,q])=>`<span>👑 ${esc(n)} ×${q}</span>`).join("　"):'<span class="none">暂无点亮记录</span>';
+  return `<article class="card ${done?"done":""}">
+   <div class="name">${esc(x.item_name)} ${done?"✨":""}</div>
+   <div class="num">${x.current_count} / ${x.target_count}</div>
+   <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+   <div class="contributors">${who}</div>
+   <div class="actions">
+    <button onclick="changeItem(${x.id},-1)">−1</button>
+    <button onclick="changeItem(${x.id},1)" ${done?"disabled":""}>＋1</button>
+    <button onclick="fillItem(${x.id})" ${done?"disabled":""}>点满</button>
+   </div>
+  </article>`;
+ }).join("");
+ applyWeekPermissions();
+}
+async function changeItem(itemId,delta){
+ if(busy)return;if(!guardCurrentWeek(delta>0?"点亮":"撤销点亮"))return;const sisterId=+$("sister").value;
+ if(!sisterId){toast("请先选择姐姐");return}
+ busy=true;
+ try{
+  const fn=delta>0?"light_gallery_item":"undo_gallery_item";
+  const r=await db.rpc(fn,{p_gallery_item_id:itemId,p_sister_id:sisterId});
+  if(r.error)throw r.error;await loadGallery();toast(delta>0?"点亮成功 ✨":"已撤销一次点亮");
+ }catch(e){err(e)}finally{busy=false}
+}
+
+
+async function fillItem(itemId){
+ if(busy)return;if(!guardCurrentWeek("点满礼物"))return;
+ const sisterId=+$("sister").value,s=selectedSister(),item=items.find(x=>+x.id===+itemId);
+ if(!sisterId)return toast("请先选择姐姐");
+ if(!item)return;
+ const missing=Math.max(0,item.target_count-item.current_count);
+ if(!missing)return toast("这个礼物已经点满 ✨");
+ if(!confirm(`确定点满「${item.item_name}」？\n\n姐姐：${s?.nickname||""}\n补满：${missing} 个`))return;
+ busy=true;
+ try{
+  const r=await db.rpc("fill_gallery_item",{p_gallery_item_id:itemId,p_sister_id:sisterId});
+  if(r.error)throw r.error;
+  await loadGallery();toast(`「${item.item_name}」已补满 ${r.data} 个 ✨`);
+ }catch(e){err(e)}finally{busy=false}
+}
+
+$("createGallery").onclick=async()=>{
+ try{
+   if(isPastWeek())return toast("过去周次已锁定，不能建立或修改展馆");
+  const hostId=+$("host").value,weekId=+$("week").value,size=+$("galleryType").value;
+  if(!hostId||!weekId)return toast("请先选择周次和哥哥");
+  const ex=await db.from("host_galleries").select("id,gallery_size").eq("host_id",hostId).eq("week_id",weekId).maybeSingle();
+  if(ex.error)throw ex.error;
+  if(ex.data){await loadGallery();return toast(`已载入 ${ex.data.gallery_size}馆`)}
+  const h=selectedHost(),w=selectedWeek();
+  if(!confirm(`确定建立？\n\n周次：${w?.week_name||""}\n哥哥：${h?.name||""}\n展馆：${galleryNames[size]} ${size}馆`))return;
+  const r=await db.rpc("create_host_gallery",{p_host_id:hostId,p_week_id:weekId,p_gallery_size:size});
+  if(r.error)throw r.error;await loadGallery();toast("展馆建立成功");
+ }catch(e){err(e)}
+};
+
+$("changeGalleryType").onclick=async()=>{
+ try{
+  if(busy)return;
+  if(!guardCurrentWeek("更换馆型"))return;
+  if(!gallery)return toast("请先建立或载入展馆");
+  const newSize=+$("galleryType").value,oldSize=+gallery.gallery_size;
+  if(newSize===oldSize)return toast(`当前已经是 ${oldSize}馆`);
+  const h=selectedHost(),w=selectedWeek();
+  if(!confirm(`确定更换馆型？\n\n周次：${w?.week_name||""}\n哥哥：${h?.name||""}\n${galleryNames[oldSize]} ${oldSize}馆 → ${galleryNames[newSize]} ${newSize}馆\n\n系统只会重建这一位哥哥本周的展馆；其他哥哥完全不动。\n当前这一馆的点亮进度会清空。`)){
+   $("galleryType").value=String(oldSize);return;
+  }
+  busy=true;
+  // 安全版：所有删除/重建都封装在数据库 transaction RPC 中。
+  // 任一步失败会整笔回滚，不会留下「礼物被删但新馆没建好」的半成品状态。
+  const r=await db.rpc("change_host_gallery_size",{
+   p_gallery_id:Number(gallery.id),
+   p_new_gallery_size:newSize
+  });
+  if(r.error)throw r.error;
+  await loadGallery();
+  toast(`${h?.name||"哥哥"} 已安全更换为 ${newSize}馆 ✨`);
+ }catch(e){
+  err(e);
+  try{await loadGallery()}catch(_){}
+ }finally{busy=false}
+};
+
+$("fillAll").onclick=async()=>{
+ if(busy)return;if(!guardCurrentWeek("一键点亮"))return;
+ const sisterId=+$("sister").value,s=selectedSister();
+ if(!gallery)return toast("请先建立或载入展馆");
+ if(!sisterId)return toast("请先选择姐姐");
+ const missing=items.reduce((a,x)=>a+Math.max(0,x.target_count-x.current_count),0);
+ if(!missing)return toast("这个展馆已经全部点满 ✨");
+ if(!confirm(`一键点亮会把当前展馆所有空缺补满。\n\n姐姐：${s?.nickname||""}\n共补：${missing} 次\n\n全部点亮记录都会记在这位姐姐名下，确定继续吗？`))return;
+ busy=true;
+ try{
+  const r=await db.rpc("fill_gallery_all",{p_gallery_id:gallery.id,p_sister_id:sisterId});
+  if(r.error)throw r.error;
+  const ev=await db.rpc("push_screen_event",{
+    p_host_id:Number(selectedHost()?.id||0),
+    p_gallery_id:Number(gallery.id),
+    p_gallery_item_id:null,
+    p_sister_id:Number(sisterId),
+    p_event_type:"gallery_full",
+    p_message:`${selectedHost()?.name||"哥哥"} 满展达成`
+  });
+  if(ev.error)console.error("满展CG事件发送失败",ev.error);
+  await loadGallery();toast(`已一键补满 ${missing} 次 ✨`);
+ }catch(e){err(e)}finally{busy=false}
+};
+
+
+$("undoLast").onclick=async()=>{
+ if(busy)return;if(!guardCurrentWeek("撤销操作"))return;
+ if(!gallery)return toast("请先建立或载入展馆");
+ if(!confirm("确定撤销当前展馆的上一步操作吗？\n\n普通 +1、单品点满、全馆点满都会整步撤销。"))return;
+ busy=true;
+ try{
+  const r=await db.rpc("undo_last_gallery_action",{p_gallery_id:gallery.id});
+  if(r.error)throw r.error;
+  await loadGallery();toast(`已撤销上一步，共退回 ${r.data} 个点亮`);
+ }catch(e){err(e)}finally{busy=false}
+};
+
+$("addSister").onclick=async()=>{
+ try{
+  const name=$("newSister").value.trim(),hostId=+$("host").value;if(!name)return toast("请输入姐姐昵称");if(!hostId)return toast("请先选择哥哥");
+  const r=await db.rpc("add_sister",{p_name:name});if(r.error)throw r.error;
+  const a=await db.rpc("assign_sister_to_host",{p_host_id:hostId,p_sister_id:r.data});if(a.error)throw a.error;
+  $("newSister").value="";await loadSisters(r.data);toast(`已新增并加入当前哥哥：${name}`);
+ }catch(e){err(e)}
+};
+$("renameSister").onclick=async()=>{
+ try{
+  const id=+$("sister").value,s=selectedSister();if(!id)return toast("请先选择姐姐");
+  const name=prompt("请输入新的姐姐昵称：",s?.nickname||"");if(name===null)return;if(!name.trim())return toast("昵称不能为空");
+  const r=await db.rpc("rename_sister",{p_sister_id:id,p_nickname:name.trim()});if(r.error)throw r.error;
+  await loadSisters(id);await loadGallery();toast("昵称修改成功");
+ }catch(e){err(e)}
+};
+$("deleteSister").onclick=async()=>{
+ try{
+  const id=+$("sister").value,s=selectedSister();if(!id)return toast("请先选择姐姐");
+  if(!confirm(`确定删除「${s?.nickname||"该姐姐"}」吗？\n已有点亮记录的姐姐不会被删除。`))return;
+  const r=await db.rpc("delete_sister",{p_sister_id:id});if(r.error)throw r.error;
+  await loadSisters();await loadGallery();toast("姐姐已删除");
+ }catch(e){err(e)}
+};
+$("assignSister").onclick=async()=>{
+ try{
+  const hostId=+$("host").value;if(!hostId)return toast("请先选择哥哥");
+  const [all,links]=await Promise.all([db.from("sisters").select("id,nickname").eq("is_active",true).order("id"),db.from("host_sisters").select("sister_id").eq("host_id",hostId)]);
+  if(all.error)throw all.error;if(links.error)throw links.error;
+  const used=new Set((links.data||[]).map(x=>+x.sister_id)),choices=(all.data||[]).filter(x=>!used.has(+x.id));
+  if(!choices.length)return toast("所有姐姐都已加入当前哥哥");
+  const raw=prompt("输入姐姐 ID：\n\n"+choices.map(x=>`${x.id}：${x.nickname}`).join("\n"));if(raw===null)return;
+  const id=+raw;if(!choices.some(x=>+x.id===id))return toast("姐姐 ID 不正确");
+  const r=await db.rpc("assign_sister_to_host",{p_host_id:hostId,p_sister_id:id});if(r.error)throw r.error;
+  await loadSisters(id);toast("已加入当前哥哥");
+ }catch(e){err(e)}
+};
+$("removeSister").onclick=async()=>{
+ try{
+  const hostId=+$("host").value,id=+$("sister").value,s=selectedSister();if(!hostId||!id)return toast("请先选择哥哥和姐姐");
+  if(!confirm(`确定把「${s?.nickname||"该姐姐"}」移出当前哥哥吗？\n历史点亮记录不会删除。`))return;
+  const r=await db.rpc("remove_sister_from_host",{p_host_id:hostId,p_sister_id:id});if(r.error)throw r.error;
+  await loadSisters();toast("已移出当前哥哥");
+ }catch(e){err(e)}
+};
+
+
+async function pushScreenCommand(type){
+   const h=selectedHost();
+   if(type==="screen_switch" && !h)return toast("请先选择哥哥");
+   const cmd={type,host_id:type==="screen_switch"?Number(h.id):null,at:Date.now()};
+   if("BroadcastChannel" in window){const ch=new BroadcastChannel("hui-zuan-screen");ch.postMessage(cmd);ch.close()}
+   localStorage.setItem("hui_zuan_screen_command",JSON.stringify(cmd));
+
+   const r=await db.rpc("push_screen_event",{
+     p_host_id:cmd.host_id,
+     p_gallery_id:type==="screen_switch"?(gallery?.id||null):null,
+     p_gallery_item_id:null,
+     p_sister_id:null,
+     p_event_type:type,
+     p_message:type==="screen_switch"?`切换投屏：${h.name}`:"恢复自动轮播"
+   });
+   if(r.error)throw new Error("远程投屏指令写入失败："+r.error.message);
+   toast(type==="screen_switch"?`远程投屏已切换到：${h.name}`:"远程投屏已恢复自动轮播");
+}
+$("switchScreen").onclick=async()=>{try{await pushScreenCommand("screen_switch")}catch(e){err(e)}};
+$("resumeScreen").onclick=async()=>{try{await pushScreenCommand("screen_auto")}catch(e){err(e)}};
+
+$("host").onchange=async()=>{try{await loadSisters();await loadGallery()}catch(e){err(e)}};
+$("week").onchange=async()=>{try{await loadGallery();applyWeekPermissions()}catch(e){err(e)}};
+$("refresh").onclick=async()=>{try{const sid=+$("sister").value;await loadSisters(sid);await loadGallery();$("status").textContent="● 数据库已连接"}catch(e){err(e)}};
+
+async function init(){
+ try{
+  $("status").textContent="● 连接中";
+  await loadHosts();
+  const ew=await db.rpc("ensure_future_weeks",{p_weeks_ahead:12});
+  if(ew.error)throw ew.error;
+  await loadWeeks();
+  await loadSisters();await loadGallery();
+  $("status").textContent="● 数据库已连接";
+ }catch(e){err(e)}
+}
+init();
+</script>
+</body></html>

@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUI ZUAN CLUB｜展馆实时投屏 V26</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;color:#f8f8f6;background:#020306}
+body:before{content:"";position:fixed;inset:0;background:#020306;z-index:-5}
+body:after{display:none}
+.screen{height:100vh;padding:1.8vh 1.8vw 1.2vh;display:grid;grid-template-rows:auto 1fr auto;gap:1.2vh}.top{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:.25vh .8vw 1.35vh;border-bottom:1px solid rgba(225,232,241,.2)}.top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,#e9edf4 20%,transparent 50%,#e9edf4 80%,transparent);opacity:.38}.brand{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-weight:500;letter-spacing:.48em;font-size:clamp(18px,1.5vw,31px);text-shadow:0 0 24px rgba(255,255,255,.15)}.brand:after{content:"PRIVATE DIAMOND GALLERY";display:block;margin-top:.42vh;font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(7px,.52vw,11px);letter-spacing:.45em;color:#7f8998}.week{text-align:center}.week .label{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(9px,.62vw,13px);letter-spacing:.38em;color:#8993a1}.week .name{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(15px,1.12vw,24px);font-weight:600;letter-spacing:.1em;margin-top:.4vh}.goal{text-align:right}.goal b{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(25px,2vw,43px);font-weight:400;text-shadow:0 0 18px rgba(255,255,255,.2)}.goal span{color:#929ba8;font-size:clamp(10px,.72vw,15px)}.goalbar{height:2px;width:min(250px,18vw);margin:.7vh 0 0 auto;background:#252a32;overflow:visible}.goalbar i{position:relative;display:block;height:100%;background:linear-gradient(90deg,#697382,#fff);box-shadow:0 0 10px rgba(255,255,255,.8)}.goalbar i:after{content:"✦";position:absolute;right:-5px;top:50%;transform:translateY(-52%);font-size:10px;color:white;text-shadow:0 0 10px white}
+.stage{min-height:0;display:grid;grid-template-columns:minmax(300px,31.5%) 1fr;gap:1.45vw}.hero{position:relative;overflow:hidden;border:1px solid rgba(220,228,239,.22);background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.008) 45%,rgba(147,162,184,.025));box-shadow:inset 0 0 70px rgba(210,222,240,.035),0 20px 60px rgba(0,0,0,.4)}.hero:before{content:"";position:absolute;width:74%;aspect-ratio:1;border:1px solid rgba(224,232,242,.18);border-radius:50%;left:13%;top:10%;box-shadow:0 0 0 18px rgba(255,255,255,.008),0 0 60px rgba(194,210,235,.06);z-index:0}.hero:after{content:"";position:absolute;inset:2.2%;border:1px solid rgba(255,255,255,.055);pointer-events:none}.avatar{position:absolute;inset:2% 0 0;display:flex;align-items:flex-end;justify-content:center;z-index:1}.avatar img{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 22px 32px rgba(0,0,0,.68));transition:opacity .35s,transform .35s}.hostplate{position:absolute;left:6%;right:6%;bottom:4.3%;z-index:3;padding:1.3vh 1.1vw 1.2vh;border-top:1px solid rgba(242,245,250,.38);border-bottom:1px solid rgba(242,245,250,.13);background:linear-gradient(90deg,rgba(3,5,8,.88),rgba(10,13,18,.7),rgba(3,5,8,.88));backdrop-filter:blur(14px);text-align:center}.hostplate:before,.hostplate:after{content:"✦";position:absolute;top:50%;transform:translateY(-50%);color:#8993a2;font-size:10px}.hostplate:before{left:3%}.hostplate:after{right:3%}.hostplate .cn{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(29px,2.55vw,54px);font-weight:600;letter-spacing:.16em;text-shadow:0 0 20px rgba(255,255,255,.13)}.hostplate .en{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(8px,.58vw,12px);letter-spacing:.48em;color:#8e98a6;margin-top:.42vh}
+.museum{min-width:0;position:relative;border:1px solid rgba(222,230,241,.2);padding:1.45vh 1.05vw;background:linear-gradient(145deg,rgba(13,17,24,.94),rgba(4,6,10,.96));display:grid;grid-template-rows:auto 1fr;overflow:hidden;box-shadow:inset 0 0 75px rgba(198,213,235,.025),0 20px 60px rgba(0,0,0,.3)}.museum:before{content:"";position:absolute;inset:7px;border:1px solid rgba(255,255,255,.035);pointer-events:none}.museumHead{display:flex;align-items:flex-end;justify-content:space-between;padding:.1vh .45vw 1.05vh;border-bottom:1px solid rgba(255,255,255,.12)}.museumTitle .small{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(9px,.61vw,13px);letter-spacing:.45em;color:#828c9b}.museumTitle .big{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(22px,1.85vw,39px);font-weight:600;letter-spacing:.06em;margin-top:.25vh}.completion{text-align:right}.completion b{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(21px,1.65vw,35px);font-weight:400}.completion span{color:#858f9e;font-size:clamp(9px,.68vw,14px)}
+.grid{min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55vw;padding-top:1.05vh;align-content:stretch}.grid.g12{grid-template-rows:repeat(3,1fr)}.grid.g20{grid-template-rows:repeat(5,1fr)}.grid.g24{grid-template-rows:repeat(6,1fr)}.grid.g28{grid-template-rows:repeat(7,1fr)}.gift{min-width:0;min-height:0;position:relative;border:1px solid rgba(205,215,230,.13);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.009));padding:.4vh .42vw;display:grid;grid-template-rows:1fr auto auto;place-items:center;overflow:hidden;transition:.3s;box-shadow:inset 0 -18px 35px rgba(0,0,0,.18)}.gift:after{content:"";position:absolute;left:12%;right:12%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(218,228,242,.22),transparent)}.gift.done{border-color:rgba(235,240,247,.55);background:radial-gradient(ellipse at 50% 78%,rgba(224,234,249,.13),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015));box-shadow:inset 0 0 24px rgba(221,232,249,.09),0 0 13px rgba(220,232,250,.06)}.gift.done:before{content:"✦";position:absolute;right:7px;top:3px;color:#f8fbff;font-size:9px;text-shadow:0 0 11px white}.gift.flash{animation:flash .9s ease}.icon{width:min(5.3vh,4.2vw);height:min(5.3vh,4.2vw);display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle,rgba(255,255,255,.12),rgba(255,255,255,.015) 60%,transparent 62%);font-size:clamp(15px,1.35vw,28px);overflow:hidden;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}.icon img{width:86%;height:86%;object-fit:contain}.gift:not(.done) .icon{filter:saturate(.45) brightness(.7);opacity:.62}.giftName{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;max-width:100%;font-size:clamp(9px,.7vw,15px);font-weight:600;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1vh}.count{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(8px,.61vw,13px);color:#7f8997;margin-top:.12vh;letter-spacing:.06em}.gift.done .count{color:#dfe5ee}.foot{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;display:flex;justify-content:space-between;align-items:center;padding:0 .5vw;color:#707987;font-size:clamp(8px,.61vw,13px);letter-spacing:.19em}.dots{display:flex;gap:6px}.dots i{width:3px;height:3px;border-radius:50%;background:#444c58}.dots i.on{width:14px;border-radius:8px;background:#e8edf5;box-shadow:0 0 10px rgba(255,255,255,.6)}
+.notice{position:fixed;left:50%;top:8%;transform:translate(-50%,-18px);z-index:20;min-width:35vw;text-align:center;padding:1.35vh 2.4vw;border:1px solid rgba(235,240,248,.3);background:linear-gradient(110deg,rgba(3,5,8,.94),rgba(17,21,28,.93),rgba(3,5,8,.94));backdrop-filter:blur(18px);opacity:0;pointer-events:none;transition:.35s;box-shadow:0 16px 60px rgba(0,0,0,.48),inset 0 0 35px rgba(255,255,255,.025)}.notice:before,.notice:after{content:"◇";position:absolute;top:50%;transform:translateY(-50%);color:#8f99a7}.notice:before{left:18px}.notice:after{right:18px}.notice.show{opacity:1;transform:translate(-50%,0)}.notice .n1{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(12px,.9vw,19px);letter-spacing:.08em;color:#aeb7c4}.notice .n2{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(22px,1.75vw,37px);font-weight:500;letter-spacing:.12em;margin-top:.38vh;text-shadow:0 0 17px rgba(255,255,255,.15)}
+.cg{position:fixed;inset:0;z-index:50;background:#010204;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.75s}.cg:before{content:"";position:absolute;z-index:2;width:54vw;aspect-ratio:1;border:1px solid rgba(255,255,255,.28);border-radius:50%;box-shadow:0 0 0 18px rgba(255,255,255,.02),0 0 90px rgba(220,232,250,.13);opacity:0;transform:scale(.75);transition:1.2s .15s}.cg.show:before{opacity:.8;transform:scale(1)}.cg.show{opacity:1}.cg img{position:absolute;left:0;top:0;width:100vw;height:100vh;max-width:none;max-height:none;object-fit:fill;object-position:center;animation:none;transform:none}.cg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 50%,rgba(0,0,0,.62));z-index:1}.cgText{position:absolute;z-index:3;left:0;right:0;bottom:6%;text-align:center;text-shadow:0 4px 24px #000}.cgText b{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(40px,4.5vw,90px);font-weight:400;letter-spacing:.24em}.cgText div{font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(12px,1vw,21px);letter-spacing:.65em;margin-top:1vh;color:#dce2eb}.cgMarquee{position:absolute;z-index:4;left:0;right:0;top:50%;transform:translateY(-50%);height:8vh;min-height:58px;overflow:hidden;border-top:1px solid rgba(244,248,255,.58);border-bottom:1px solid rgba(244,248,255,.42);background:linear-gradient(90deg,rgba(1,3,7,.18),rgba(5,8,14,.76) 18%,rgba(8,11,18,.82) 50%,rgba(5,8,14,.76) 82%,rgba(1,3,7,.18));box-shadow:0 0 28px rgba(218,232,255,.13),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(7px);opacity:0;transition:.35s}.cgMarquee.show{opacity:1}.cgMarquee span{position:absolute;white-space:nowrap;left:100%;top:50%;transform:translateY(-50%);font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(22px,2vw,42px);font-weight:600;letter-spacing:.22em;color:#f7f9fc;text-shadow:0 0 18px rgba(255,255,255,.48),0 2px 14px #000;animation:cgTickerOnce 6.2s linear 1 both}@keyframes cgTickerOnce{from{left:100%}to{left:-45%}}
+.empty{grid-column:1/-1;display:grid;place-items:center;color:#87919e;font-size:1.5vw;letter-spacing:.12em}.statusDot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#e0e6ee;margin-right:8px;box-shadow:0 0 9px #fff}
+@keyframes flash{0%{transform:scale(1)}40%{transform:scale(1.045);border-color:white;box-shadow:0 0 35px rgba(225,236,255,.38),inset 0 0 28px rgba(255,255,255,.12)}100%{transform:scale(1)}}@keyframes cgzoom{from{transform:scale(1.04)}to{transform:scale(1)}}
+
+/* V6 visible architectural background: black-silver private jewelry hall */
+.hallbg{position:fixed;inset:0;z-index:-4;overflow:hidden;background:linear-gradient(180deg,#05070b 0%,#080b10 48%,#020305 100%)}
+.hallbg .ceiling{position:absolute;left:0;right:0;top:0;height:28%;background:linear-gradient(165deg,rgba(255,255,255,.035),transparent 31%),linear-gradient(195deg,rgba(255,255,255,.028),transparent 31%);clip-path:polygon(0 0,100% 0,83% 100%,17% 100%);border-bottom:1px solid rgba(226,233,243,.18)}
+.hallbg .ceiling:before,.hallbg .ceiling:after{content:"";position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(#eef3fa,transparent);opacity:.32}.hallbg .ceiling:before{left:27%;transform:rotate(18deg)}.hallbg .ceiling:after{right:27%;transform:rotate(-18deg)}
+.hallbg .backwall{position:absolute;left:18%;right:18%;top:12%;bottom:13%;border-left:1px solid rgba(222,230,242,.2);border-right:1px solid rgba(222,230,242,.2);background:linear-gradient(90deg,rgba(255,255,255,.02),transparent 16% 84%,rgba(255,255,255,.02)),linear-gradient(180deg,rgba(15,20,29,.88),rgba(4,6,10,.82));box-shadow:inset 0 0 120px rgba(182,204,236,.035)}
+.hallbg .arch{position:absolute;left:50%;top:13%;width:min(42vw,760px);height:64%;transform:translateX(-50%);border:1px solid rgba(225,233,244,.25);border-bottom:0;border-radius:50% 50% 0 0/34% 34% 0 0;box-shadow:0 0 0 10px rgba(255,255,255,.008),0 0 70px rgba(196,216,244,.05),inset 0 0 55px rgba(255,255,255,.018)}
+.hallbg .arch:before{content:"";position:absolute;inset:4.5%;border:1px solid rgba(219,229,243,.11);border-bottom:0;border-radius:50% 50% 0 0/34% 34% 0 0}
+.hallbg .rings{position:absolute;left:50%;top:35%;width:min(28vw,520px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(238,243,249,.24);border-radius:50%;box-shadow:0 0 45px rgba(215,228,247,.055)}
+.hallbg .rings:before{content:"";position:absolute;inset:13%;border:1px solid rgba(238,243,249,.13);border-radius:50%}.hallbg .rings:after{content:"HUI ZUAN";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:Didot,"Bodoni 72","Times New Roman",serif;font-size:clamp(26px,3vw,58px);letter-spacing:.34em;white-space:nowrap;color:rgba(240,244,250,.12);text-shadow:0 0 24px rgba(255,255,255,.04)}
+.hallbg .pillar{position:absolute;top:12%;bottom:10%;width:8.5%;border-left:1px solid rgba(238,243,250,.22);border-right:1px solid rgba(238,243,250,.1);background:linear-gradient(90deg,rgba(255,255,255,.012),rgba(255,255,255,.055) 50%,rgba(255,255,255,.008));box-shadow:inset 0 0 30px rgba(255,255,255,.018)}.hallbg .p1{left:5%}.hallbg .p2{right:5%;transform:scaleX(-1)}
+.hallbg .pillar:before{content:"";position:absolute;left:-10%;right:-10%;top:0;height:2px;background:linear-gradient(90deg,transparent,#e7edf6,transparent);opacity:.45}.hallbg .pillar:after{content:"";position:absolute;left:-18%;right:-18%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#dfe7f2,transparent);opacity:.3}
+.hallbg .floor{position:absolute;left:-8%;right:-8%;bottom:-16%;height:40%;transform:perspective(650px) rotateX(63deg);transform-origin:center top;background:repeating-linear-gradient(90deg,transparent 0 12.45%,rgba(229,236,246,.09) 12.5%,transparent 12.56%),repeating-linear-gradient(0deg,transparent 0 24.7%,rgba(229,236,246,.07) 24.9%,transparent 25.1%),linear-gradient(180deg,rgba(18,23,31,.9),#020305);border-top:1px solid rgba(239,243,249,.25);box-shadow:0 -18px 45px rgba(211,226,248,.035)}
+.hallbg .floorGlow{position:absolute;left:12%;right:12%;bottom:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(236,242,250,.52),transparent);box-shadow:0 0 24px rgba(219,232,250,.2)}
+.hallbg .beam{position:absolute;top:0;width:18%;height:80%;background:linear-gradient(180deg,rgba(229,238,250,.07),transparent 70%);filter:blur(12px);clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);opacity:.55}.hallbg .b1{left:15%}.hallbg .b2{right:13%}
+.screen{position:relative;z-index:1}
+.hero,.museum{backdrop-filter:blur(4px)}
+
+/* V7: weekly target achieved scene */
+body.target-achieved .hallbg{background:radial-gradient(circle at 50% 34%,rgba(205,220,244,.16),transparent 28%),linear-gradient(180deg,#080b12 0%,#0b1019 48%,#020305 100%)}
+body.target-achieved .hallbg .arch{border-color:rgba(244,248,255,.72);box-shadow:0 0 0 10px rgba(255,255,255,.018),0 0 85px rgba(210,229,255,.22),inset 0 0 70px rgba(225,238,255,.07)}
+body.target-achieved .hallbg .rings{border-color:rgba(248,251,255,.72);box-shadow:0 0 35px rgba(240,247,255,.25),0 0 95px rgba(196,222,255,.16);animation:targetRing 9s linear infinite}
+body.target-achieved .hallbg .rings:before{border-color:rgba(244,249,255,.45)}
+body.target-achieved .hallbg .rings:after{color:rgba(250,252,255,.32);text-shadow:0 0 28px rgba(235,246,255,.2)}
+body.target-achieved .hallbg .pillar{border-color:rgba(238,246,255,.42);background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(224,237,255,.11) 50%,rgba(255,255,255,.012))}
+body.target-achieved .hallbg .beam{opacity:.9;background:linear-gradient(180deg,rgba(236,246,255,.14),transparent 72%)}
+body.target-achieved .hallbg .floorGlow{height:2px;background:linear-gradient(90deg,transparent,rgba(248,251,255,.92),transparent);box-shadow:0 0 35px rgba(220,237,255,.48)}
+body.target-achieved .hero{border-color:rgba(235,244,255,.52);box-shadow:inset 0 0 85px rgba(218,235,255,.075),0 0 38px rgba(211,231,255,.11),0 20px 60px rgba(0,0,0,.4)}
+body.target-achieved .hero:before{border-color:rgba(246,250,255,.55);box-shadow:0 0 0 18px rgba(255,255,255,.018),0 0 75px rgba(214,235,255,.22);animation:heroHalo 4.8s ease-in-out infinite}
+body.target-achieved .museum{border-color:rgba(230,240,255,.34);box-shadow:inset 0 0 85px rgba(211,231,255,.05),0 0 34px rgba(205,228,255,.08)}
+body.target-achieved .goal:before{content:"WEEKLY TARGET ACHIEVED";display:block;margin-bottom:.15vh;font-family:Didot,"Bodoni 72","Times New Roman",serif;font-size:clamp(7px,.5vw,11px);letter-spacing:.34em;color:#dce8f7;text-shadow:0 0 12px rgba(255,255,255,.35)}
+body.target-achieved .goalbar i{box-shadow:0 0 18px rgba(255,255,255,1),0 0 34px rgba(204,226,255,.55)}
+body.target-achieved .hostplate{border-color:rgba(245,249,255,.48);box-shadow:0 0 26px rgba(215,235,255,.09)}
+body.target-achieved .hostplate .en:after{content:"  ·  15 EXHIBITS ACHIEVED";color:#d9e5f4}
+@keyframes targetRing{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes heroHalo{0%,100%{opacity:.7;transform:scale(.985)}50%{opacity:1;transform:scale(1.025)}}
+
+
+/* V28 Gallery relief watermark: rank is engraved behind the gift collection */
+.museum{position:relative;isolation:isolate;overflow:hidden}
+.museumHead,.grid{position:relative;z-index:2}
+.galleryClass{position:absolute;z-index:0;left:50%;top:55%;transform:translate(-50%,-50%);width:min(46vw,620px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.13;transition:opacity .45s ease,filter .45s ease;background:radial-gradient(circle,rgba(225,235,248,.055) 0 36%,transparent 68%);border:2px solid rgba(238,244,252,.72);box-shadow:inset 0 0 0 12px rgba(0,0,0,.24),inset 0 0 0 13px rgba(232,240,251,.28),inset 0 0 70px rgba(222,235,252,.12),0 0 55px rgba(210,229,252,.06)}
+.galleryClass:before{content:"";position:absolute;inset:7%;border-radius:50%;border:1px solid rgba(244,248,255,.62);box-shadow:inset 0 0 0 10px rgba(3,6,10,.28),inset 0 0 0 11px rgba(224,236,251,.18)}
+.galleryClass:after{content:"✦";position:absolute;left:50%;top:-2.2%;transform:translateX(-50%);font-size:clamp(18px,2vw,34px);color:rgba(250,252,255,.9);text-shadow:0 0 12px rgba(255,255,255,.55)}
+.galleryClass .rank{position:relative;z-index:1;font-family:Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif;font-size:clamp(150px,18vw,330px);font-weight:400;line-height:.8;color:rgba(240,246,253,.76);text-shadow:-2px -2px 0 rgba(255,255,255,.36),2px 2px 0 rgba(0,0,0,.9),0 0 28px rgba(220,237,255,.12)}
+.galleryClass .caption{position:absolute;bottom:17%;font-family:Didot,"Bodoni 72","Times New Roman",serif;font-size:clamp(8px,.65vw,13px);letter-spacing:.65em;color:rgba(236,243,252,.6)}
+.galleryClass[data-rank="C"]{opacity:.085}
+.galleryClass[data-rank="C"]:before{display:none}
+.galleryClass[data-rank="B"]{opacity:.105;box-shadow:inset 0 0 0 10px rgba(0,0,0,.22),inset 0 0 0 11px rgba(232,240,251,.22),inset 0 0 62px rgba(222,235,252,.1)}
+.galleryClass[data-rank="A"]{opacity:.125;border-color:rgba(246,249,255,.8)}
+.galleryClass[data-rank="A"] .rank:after{content:"❧";position:absolute;left:50%;bottom:-24%;transform:translateX(-50%);font-size:clamp(24px,2.6vw,46px);color:rgba(239,245,253,.58)}
+.galleryClass[data-rank="S"]{opacity:.16;border:3px double rgba(252,253,255,.94);box-shadow:inset 0 0 0 12px rgba(1,3,7,.28),inset 0 0 0 14px rgba(242,247,255,.35),inset 0 0 0 24px rgba(2,5,10,.18),inset 0 0 0 25px rgba(225,238,253,.16),inset 0 0 90px rgba(233,243,255,.17),0 0 75px rgba(214,234,255,.1)}
+.galleryClass[data-rank="S"]:before{inset:10%;border:2px solid rgba(248,251,255,.72);box-shadow:inset 0 0 0 8px rgba(2,5,10,.25),inset 0 0 0 9px rgba(235,244,255,.24),0 0 22px rgba(239,247,255,.12)}
+.galleryClass[data-rank="S"]:after{content:"◆";top:-2.8%;color:#fff;text-shadow:0 0 8px #fff,0 0 20px rgba(210,232,255,.8)}
+.galleryClass[data-rank="S"] .rank:before,.galleryClass[data-rank="S"] .rank:after{content:"✦";position:absolute;top:46%;font-size:clamp(12px,1.2vw,22px);color:rgba(250,253,255,.9);text-shadow:0 0 12px rgba(255,255,255,.7)}
+.galleryClass[data-rank="S"] .rank:before{right:calc(100% + 40px)}
+.galleryClass[data-rank="S"] .rank:after{left:calc(100% + 40px)}
+body.target-achieved .galleryClass{opacity:.19;filter:drop-shadow(0 0 16px rgba(230,242,255,.16))}
+
+</style>
+</head>
+<body>
+<div class="hallbg" aria-hidden="true"><div class="ceiling"></div><div class="backwall"></div><div class="arch"></div><div class="rings"></div><div class="pillar p1"></div><div class="pillar p2"></div><div class="beam b1"></div><div class="beam b2"></div><div class="floor"></div><div class="floorGlow"></div></div>
+
+<div class="screen">
+ <header class="top"><div><div class="brand">HUI ZUAN CLUB</div></div><div class="week"><div class="label">WEEKLY GALLERY</div><div class="name" id="weekName">载入本周…</div></div><div class="goal"><span>本周展馆任务　</span><b id="weeklyDone">0</b><span> / <span id="weeklyTarget">15</span></span><div class="goalbar"><i id="weeklyBar" style="width:0"></i></div></div></header>
+ <main class="stage">
+  <section class="hero"><div class="avatar"><img id="avatar" alt=""></div><div class="hostplate"><div class="cn" id="hostName">HUI ZUAN</div><div class="en">EXHIBITION COLLECTION</div></div></section>
+  <section class="museum"><div class="galleryClass" id="galleryClass" data-rank="A"><div class="rank" id="galleryRank">A</div><div class="caption">GALLERY CLASS</div></div><div class="museumHead"><div class="museumTitle"><div class="small">COLLECTION GALLERY</div><div class="big" id="galleryName">展馆载入中</div></div><div class="completion"><span>馆藏完成　</span><b id="doneItems">0</b><span id="totalItems"> / 0</span></div></div><div class="grid g24" id="grid"><div class="empty">正在连接展馆数据库…</div></div></section>
+ </main>
+ <footer class="foot"><div><span class="statusDot"></span><span id="status">实时展馆 · 已连接</span></div><div class="dots" id="dots"></div><div>AUTO ROTATION</div></footer>
+</div>
+<div class="notice" id="notice"><div class="n1" id="noticeTop"></div><div class="n2" id="noticeMain"></div></div>
+<div class="cg" id="cg"><img id="cgImg" alt=""><div class="cgText"><b id="cgHost"></b><div>FULL GALLERY · 满展达成</div></div><div class="cgMarquee" id="cgMarquee"><span id="cgMarqueeText"></span></div></div>
+<script>
+const db=supabase.createClient("https://ossaeaswzzfrekguefkh.supabase.co","sb_publishable_xxEoSgJZGaNrLmJnr1gtng_Xoxnd_Nn");
+const $=id=>document.getElementById(id);const galleryNames={12:"基础展馆",20:"进阶展馆",24:"经典展馆",28:"甄选展馆"};
+let week=null,entries=[],idx=0,lastCounts=new Map(),lastFull=new Map(),rotator=null,refreshing=false,noticeQueue=[],noticeBusy=false,screenLocked=false,lockedHostId=null,lastScreenEventId=0,screenCommandSeeded=false;
+const fullCgPlaying=new Set();
+const fullCgKey=e=>`hui_zuan_fullcg_${week?.id||"week"}_${e?.id||"gallery"}`;
+const hasPlayedFullCG=e=>sessionStorage.getItem(fullCgKey(e))==="1";
+const markPlayedFullCG=e=>sessionStorage.setItem(fullCgKey(e),"1");
+const resetPlayedFullCG=e=>{sessionStorage.removeItem(fullCgKey(e));fullCgPlaying.delete(Number(e?.id));};
+const esc=v=>String(v??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[c]));
+const fallbackIcon=name=>({"小心心":"♡","玫瑰花":"✿","大啤酒":"♨","棒棒糖":"◉","加油鸭":"♛","爱你呦":"♥","暮光星辰":"✦","比心兔兔":"♧","比心":"♡","礼花筒":"✧","珍爱玫瑰":"❀","一束花开":"❁","热气球":"◌","真的爱你":"♥","暮光恋人":"✦","万象烟花":"✺","跑车":"◆","暮光明珠":"●","花海泛舟":"❋","星光营地":"⌂","星光庄园":"♜","暮光花海":"✿","豪华邮轮":"≋","暮光瀑布":"≋","星际玫瑰":"✥","抖音一号":"1","抖音飞艇":"◇","云中秘境":"☁","嘉年华":"✺"}[name]||"✦");
+function utc8DateString(){
+ const now=new Date(),d=new Date(now.getTime()+8*60*60*1000);
+ return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+}
+function dateOnly(v){return v?String(v).slice(0,10):""}
+async function getCurrentWeek(){
+ const today=utc8DateString();
+ const r=await db.from("weeks").select("*").order("start_date",{ascending:true});
+ if(r.error)throw r.error;
+ const all=r.data||[];
+ const current=all.find(w=>{
+   const s=dateOnly(w.start_date),e=dateOnly(w.end_date);
+   return s&&e&&s<=today&&today<=e;
+ });
+ if(current)return current;
+ const marked=all.find(w=>w.is_current===true);
+ if(marked)return marked;
+ throw new Error(`找不到 ${today} 所属周次`);
+}
+async function loadAll(){if(refreshing)return;refreshing=true;try{week=await getCurrentWeek();if(!week)throw new Error("找不到当前周次");$("weekName").textContent=week.week_name;const g=await db.from("host_galleries").select("id,host_id,gallery_size,is_full,full_at,hosts(id,name,avatar_url,full_cg_url,full_voice_url,sort_order)").eq("week_id",week.id);if(g.error)throw g.error;let gs=(g.data||[]).filter(x=>x.hosts).sort((a,b)=>(a.hosts.sort_order||0)-(b.hosts.sort_order||0));const ids=gs.map(x=>x.id);let its=[];if(ids.length){const ir=await db.from("gallery_items").select("id,gallery_id,item_name,image_url,target_count,current_count,sort_order,completed_at").in("gallery_id",ids).order("sort_order");if(ir.error)throw ir.error;its=ir.data||[]}entries=gs.map(x=>({...x,items:its.filter(i=>+i.gallery_id===+x.id)}));if(screenLocked&&lockedHostId!=null){const p=entries.findIndex(x=>Number(x.hosts?.id)===Number(lockedHostId));if(p>=0)idx=p}else if(idx>=entries.length)idx=0;renderDots();detectChanges();renderCurrent();if(!screenLocked)$("status").textContent="实时展馆 · 已连接"}catch(e){console.error(e);$("status").textContent="连接异常 · "+e.message}finally{refreshing=false}}
+function renderDots(){$("dots").innerHTML=entries.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join("")}
+function renderCurrent(){if(!entries.length){document.body.classList.remove("target-achieved");$("grid").className="grid g24";$("grid").innerHTML='<div class="empty">本周尚未建立展馆</div>';$("hostName").textContent="HUI ZUAN";$("galleryName").textContent="等待展馆建立";return}const e=entries[idx],h=e.hosts;const rankMap={12:"C",20:"B",24:"A",28:"S"};const rank=rankMap[Number(e.gallery_size)]||"C";$("galleryRank").textContent=rank;$("galleryClass").dataset.rank=rank;$("hostName").textContent=h.name;$("avatar").src=h.avatar_url||"";$("galleryName").textContent=`${galleryNames[e.gallery_size]||"展馆"} · ${e.gallery_size}馆`;const done=e.items.filter(x=>+x.current_count>=+x.target_count).length;const weeklyTarget=+e.gallery_size===12?12:15;const weeklyDone=Math.min(done,weeklyTarget);document.body.classList.toggle("target-achieved",weeklyDone>=weeklyTarget);$("weeklyDone").textContent=weeklyDone;$("weeklyTarget").textContent=weeklyTarget;$("weeklyBar").style.width=Math.min(100,weeklyDone/weeklyTarget*100)+"%";$("doneItems").textContent=done;$("totalItems").textContent=` / ${e.items.length}`;$("grid").className=`grid g${e.gallery_size}`;const rows=Math.ceil(e.gallery_size/4);$("grid").innerHTML=e.items.map((x,i)=>{const d=+x.current_count>=+x.target_count;const pos=Number(x.sort_order||i+1);const row=rows-Math.floor((pos-1)/4);const col=((pos-1)%4)+1;return `<div class="gift ${d?'done':''}" data-id="${x.id}" style="grid-row:${row};grid-column:${col}"><div class="icon">${x.image_url?`<img src="${esc(x.image_url)}" onerror="this.outerHTML='${fallbackIcon(x.item_name)}'">`:fallbackIcon(x.item_name)}</div><div class="giftName">${esc(x.item_name)}</div><div class="count">${x.current_count} / ${x.target_count}</div></div>`}).join("");renderDots()}
+async function detectChanges(){
+ const completed=[];
+ for(const e of entries){
+  const isFull=e.is_full||(e.items.length&&e.items.every(i=>+i.current_count>=+i.target_count));
+  const wasFull=lastFull.get(e.id);
+  lastFull.set(e.id,!!isFull);
+  // 只有展馆真的退回未满，才重新武装下一次满展 CG。
+  if(!isFull)resetPlayedFullCG(e);
+  for(const item of e.items){
+   const old=lastCounts.get(item.id);
+   const now=+item.current_count,target=+item.target_count;
+   // 只有「这一格第一次跨过目标」才播放姐姐点亮动画，普通 +1 不播放。
+   if(old!=null && old<target && now>=target) completed.push({e,item});
+   lastCounts.set(item.id,now);
+  }
+  if(wasFull===false&&isFull){setTimeout(()=>{idx=entries.findIndex(x=>x.id===e.id);renderCurrent();$("status").textContent=`${e.hosts.name} · 检测到满展`;showFullCG(e)},1200)}
+ }
+ for(const x of completed) enqueueWinnerNotice(x.e,x.item);
+}
+async function getWinner(itemId){
+ const r=await db.from("light_records").select("id,sister_id,quantity,created_at,sisters(nickname)").eq("gallery_item_id",itemId).order("id",{ascending:true});
+ if(r.error)throw r.error;
+ const m=new Map();
+ for(const rec of r.data||[]){
+  const sid=String(rec.sister_id),q=Number(rec.quantity||1);
+  if(!m.has(sid))m.set(sid,{nickname:rec.sisters?.nickname||"未知姐姐",qty:0,firstId:Number(rec.id),firstAt:rec.created_at});
+  const x=m.get(sid);x.qty+=q;x.firstId=Math.min(x.firstId,Number(rec.id));
+ }
+ return [...m.values()].sort((a,b)=>b.qty-a.qty||a.firstId-b.firstId)[0]||null;
+}
+async function enqueueWinnerNotice(e,item){
+ try{const winner=await getWinner(item.id);noticeQueue.push({e,item,winner});playNoticeQueue()}catch(err){console.error("点亮姐姐判定失败",err)}
+}
+function playNoticeQueue(){
+ if(noticeBusy||!noticeQueue.length)return;
+ noticeBusy=true;const {e,item,winner}=noticeQueue.shift();
+ idx=entries.findIndex(x=>x.id===e.id);renderCurrent();
+ $("noticeTop").textContent=`${winner?.nickname||"姐姐"} · 点亮 ${e.hosts.name}`;
+ $("noticeMain").textContent=`✦ ${item.item_name} ✦`;
+ $("notice").classList.add("show");
+ playItemSound();
+ setTimeout(()=>document.querySelector(`[data-id="${item.id}"]`)?.classList.add("flash"),80);
+ setTimeout(()=>{$("notice").classList.remove("show");setTimeout(()=>{noticeBusy=false;playNoticeQueue()},350)},3000);
+}
+let audioCtx=null;
+function getAudioCtx(){
+ try{
+  if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended")audioCtx.resume().catch(()=>{});
+  return audioCtx;
+ }catch(_){return null}
+}
+function tone(freq,start,dur,gain=.055,type="sine"){
+ const ac=getAudioCtx();if(!ac)return;
+ const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,ac.currentTime+start);
+ g.gain.setValueAtTime(0.0001,ac.currentTime+start);g.gain.exponentialRampToValueAtTime(gain,ac.currentTime+start+.025);g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+start+dur);
+ o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+start);o.stop(ac.currentTime+start+dur+.03);
+}
+function playItemSound(){tone(880,0,.42,.04);tone(1320,.11,.52,.032);tone(1760,.23,.58,.022)}
+function playFullSound(){tone(392,0,.65,.045);tone(523.25,.12,.8,.05);tone(659.25,.26,.9,.05);tone(783.99,.42,1.05,.055);tone(1046.5,.7,1.25,.04)}
+let fullVoiceAudio=null;
+function stopFullVoice(){
+ if(fullVoiceAudio){try{fullVoiceAudio.pause();fullVoiceAudio.currentTime=0}catch(_){}fullVoiceAudio=null}
+}
+function playFullVoice(h){
+ stopFullVoice();
+ const url=String(h?.full_voice_url||"").trim();
+ if(!url){playFullSound();return}
+ try{
+  const a=new Audio(url);fullVoiceAudio=a;a.preload="auto";
+  a.onended=()=>{if(fullVoiceAudio===a)fullVoiceAudio=null};
+  a.onerror=()=>{if(fullVoiceAudio===a)fullVoiceAudio=null;console.error("满展专属语音播放失败",url);playFullSound()};
+  const p=a.play();
+  if(p&&typeof p.catch==="function")p.catch(err=>{if(fullVoiceAudio===a)fullVoiceAudio=null;console.error("满展专属语音播放失败",err);playFullSound()});
+ }catch(err){console.error("满展专属语音初始化失败",err);playFullSound()}
+}
+async function getGallerySponsor(e){
+ try{
+  const itemIds=(e?.items||[]).map(x=>Number(x.id)).filter(Boolean);
+  if(!itemIds.length)return null;
+  const r=await db.from("light_records").select("sister_id,quantity,sisters(nickname)").in("gallery_item_id",itemIds);
+  if(r.error)throw r.error;
+  const rows=r.data||[];if(!rows.length)return null;
+  const ids=[...new Set(rows.map(x=>String(x.sister_id)))];
+  if(ids.length!==1)return null;
+  return rows.find(x=>x.sisters?.nickname)?.sisters?.nickname||null;
+ }catch(err){console.error("全馆冠名判定失败",err);return null}
+}
+async function showFullCG(e){
+ const gid=Number(e?.id);
+ // 同一展馆同一次满展只允许进入一次。远端事件与本地侦测共用这把锁。
+ if(!gid)return;
+ if(fullCgPlaying.has(gid)||hasPlayedFullCG(e)){
+   console.info("满展CG已播放，本次重复触发已忽略",gid);
+   return;
+ }
+ fullCgPlaying.add(gid);
+ markPlayedFullCG(e);
+ const h=e?.hosts;
+ const url=String(h?.full_cg_url||"").trim();
+ if(!h||!url){
+   console.error("满展CG缺少地址",h);
+   $("status").textContent=`${h?.name||"哥哥"} · 未设置满展CG`;
+   resetPlayedFullCG(e);
+   return;
+ }
+ const layer=$("cg"),img=$("cgImg");
+ const marquee=$("cgMarquee"),marqueeText=$("cgMarqueeText");
+ marquee.classList.remove("show");marqueeText.textContent="";
+ const sponsor=await getGallerySponsor(e);
+ if(sponsor){marqueeText.textContent=`✦ ${sponsor}冠名全馆 ✦`;marquee.classList.add("show");clearTimeout(window.__marquee);window.__marquee=setTimeout(()=>{marquee.classList.remove("show");marqueeText.textContent=""},6250)}
+ $("cgHost").textContent=h.name;
+ clearTimeout(window.__cg);
+ layer.classList.remove("show");
+ img.onload=()=>{
+   $("status").textContent=`${h.name} · 满展CG播放中`;
+   playFullVoice(h);
+   requestAnimationFrame(()=>requestAnimationFrame(()=>layer.classList.add("show")));
+   window.__cg=setTimeout(()=>{
+     layer.classList.remove("show");marquee.classList.remove("show");
+     stopFullVoice();
+     fullCgPlaying.delete(gid);
+     $("status").textContent=screenLocked?`远程锁定 · ${h.name}`:"实时展馆 · 自动轮播";
+   },7000);
+ };
+ img.onerror=()=>{
+   console.error("满展CG图片读取失败",url);
+   $("status").textContent=`${h.name} · 满展CG图片读取失败`;
+   layer.classList.remove("show");
+   stopFullVoice();
+   resetPlayedFullCG(e);
+ };
+ img.src=url;
+}
+
+async function applyScreenCommand(cmd){
+ if(!cmd)return;
+ if(cmd.event_type==="screen_switch"){
+   const hostId=Number(cmd.host_id);
+   const pos=entries.findIndex(x=>Number(x.hosts?.id)===hostId);
+   if(pos<0){console.warn("目标哥哥本周没有展馆",hostId);return}
+   screenLocked=true;lockedHostId=hostId;idx=pos;renderCurrent();
+   $("status").textContent=`远程锁定 · ${entries[pos].hosts.name}`;
+ }else if(cmd.event_type==="screen_auto"){
+   screenLocked=false;lockedHostId=null;
+   $("status").textContent="实时展馆 · 自动轮播";
+   renderCurrent();
+ }else if(cmd.event_type==="gallery_full"){
+   // 先重新抓一次数据库，确保刚刚一键点亮后的最新数据已进入投屏。
+   await loadAll();
+   const hostId=Number(cmd.host_id);
+   let pos=entries.findIndex(x=>Number(x.hosts?.id)===hostId);
+   if(pos<0 && cmd.gallery_id!=null){
+     pos=entries.findIndex(x=>Number(x.id)===Number(cmd.gallery_id));
+   }
+   if(pos<0){
+     console.warn("收到满展事件，但找不到对应展馆",cmd);
+     $("status").textContent="收到满展事件 · 找不到对应展馆";
+     return;
+   }
+   idx=pos;
+   renderCurrent();
+   $("status").textContent=`${entries[pos].hosts.name} · 满展事件已接收`;
+   setTimeout(()=>showFullCG(entries[pos]),250);
+ }
+}
+
+async function pollScreenCommands(){
+ try{
+   const r=await db.from("screen_events")
+     .select("id,host_id,gallery_id,event_type,created_at")
+     .in("event_type",["screen_switch","screen_auto","gallery_full"])
+     .order("id",{ascending:false})
+     .limit(1)
+     .maybeSingle();
+   if(r.error)throw r.error;
+   if(!r.data)return;
+   const id=Number(r.data.id||0);
+   if(!screenCommandSeeded||id>lastScreenEventId){
+     screenCommandSeeded=true;lastScreenEventId=id;
+     await applyScreenCommand(r.data);
+   }
+ }catch(e){
+   console.error("远程投屏指令读取失败",e);
+   $("status").textContent="远程控制读取异常";
+ }
+}
+function applyLocalScreenCommand(cmd){
+ if(cmd)applyScreenCommand({event_type:cmd.type,host_id:cmd.host_id});
+}
+if("BroadcastChannel" in window){
+ const screenChannel=new BroadcastChannel("hui-zuan-screen");
+ screenChannel.onmessage=e=>applyLocalScreenCommand(e.data);
+}
+window.addEventListener("storage",e=>{
+ if(e.key==="hui_zuan_screen_command"&&e.newValue){
+   try{applyLocalScreenCommand(JSON.parse(e.newValue))}catch(_){}
+ }
+});
+
+function rotate(){if(screenLocked)return;if(entries.length>1&&!$("cg").classList.contains("show")&&!$("notice").classList.contains("show")){idx=(idx+1)%entries.length;renderCurrent()}}
+window.addEventListener("pointerdown",()=>getAudioCtx(),{once:true});
+loadAll().then(pollScreenCommands);rotator=setInterval(rotate,9000);setInterval(loadAll,1800);setInterval(pollScreenCommands,900);
+</script>
+</body></html>
