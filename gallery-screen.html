@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HUI ZUAN CLUB｜展馆实时投屏 V26</title>
+<title>HUI ZUAN CLUB｜展馆实时投屏 V41 满展修正版</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;color:#f8f8f6;background:#020306}
@@ -183,7 +183,7 @@ async function detectChanges(){
   const wasFull=lastFull.get(e.id);
   lastFull.set(e.id,!!isFull);
   // 只有展馆真的退回未满，才重新武装下一次满展 CG。
-  if(!isFull)resetPlayedFullCG(e);
+  if(!isFull){fullCgPlaying.delete(Number(e?.id));sessionStorage.removeItem(fullCgKey(e));}
   for(const item of e.items){
    const old=lastCounts.get(item.id);
    const now=+item.current_count,target=+item.target_count;
@@ -269,8 +269,9 @@ async function getGallerySponsor(e){
   return rows.find(x=>x.sisters?.nickname)?.sisters?.nickname||null;
  }catch(err){console.error("全馆冠名判定失败",err);return null}
 }
+// V41：满展只在“正在播放”期间去重，不再用 sessionStorage 永久拦截后续真实满展事件。
 async function showFullCG(e){
- const gid=Number(e?.id);if(!gid)return;if(fullCgPlaying.has(gid)||hasPlayedFullCG(e)){console.info("满展CG已播放，本次重复触发已忽略",gid);return}fullCgPlaying.add(gid);markPlayedFullCG(e);
+ const gid=Number(e?.id);if(!gid)return;if(fullCgPlaying.has(gid)){console.info("满展CG正在播放，本次重复触发已忽略",gid);return}fullCgPlaying.add(gid);
  const h=e?.hosts,fallbackUrl=String(h?.full_cg_url||"").trim();if(!h){resetPlayedFullCG(e);return}
  const weeklyCgFiles={"遇见":"yujian.png","空白":"kongbai.png","泽攸":"zeyou.png","青决":"qingjue.png","弋阳":"yiyang.png","防":"fang.png","雾":"wu.png","鲨熠":"shayi.png","祈年":"qinian.png","艾":"ai.png","宸御":"chenyu.png","北北":"beibei.png","辣椒油":"lajiaoyou.png","七百万":"qibaiwan.png"};
  const weeklyFile=weeklyCgFiles[h.name]||"",weekFolder=String(week?.start_date||"").trim(),weeklyUrl=(weeklyFile&&weekFolder)?`weekly-images/${weekFolder}/${weeklyFile}`:"";
