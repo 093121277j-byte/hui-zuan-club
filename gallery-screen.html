@@ -270,52 +270,16 @@ async function getGallerySponsor(e){
  }catch(err){console.error("全馆冠名判定失败",err);return null}
 }
 async function showFullCG(e){
- const gid=Number(e?.id);
- // 同一展馆同一次满展只允许进入一次。远端事件与本地侦测共用这把锁。
- if(!gid)return;
- if(fullCgPlaying.has(gid)||hasPlayedFullCG(e)){
-   console.info("满展CG已播放，本次重复触发已忽略",gid);
-   return;
- }
- fullCgPlaying.add(gid);
- markPlayedFullCG(e);
- const h=e?.hosts;
- const url=String(h?.full_cg_url||"").trim();
- if(!h||!url){
-   console.error("满展CG缺少地址",h);
-   $("status").textContent=`${h?.name||"哥哥"} · 未设置满展CG`;
-   resetPlayedFullCG(e);
-   return;
- }
- const layer=$("cg"),img=$("cgImg");
- const marquee=$("cgMarquee"),marqueeText=$("cgMarqueeText");
- marquee.classList.remove("show");marqueeText.textContent="";
- const sponsor=await getGallerySponsor(e);
- if(sponsor){marqueeText.textContent=`✦ ${sponsor}冠名全馆 ✦`;marquee.classList.add("show");clearTimeout(window.__marquee);window.__marquee=setTimeout(()=>{marquee.classList.remove("show");marqueeText.textContent=""},6250)}
- $("cgHost").textContent=h.name;
- clearTimeout(window.__cg);
- layer.classList.remove("show");
- img.onload=()=>{
-   $("status").textContent=`${h.name} · 满展CG播放中`;
-   playFullVoice(h);
-   requestAnimationFrame(()=>requestAnimationFrame(()=>layer.classList.add("show")));
-   window.__cg=setTimeout(()=>{
-     layer.classList.remove("show");marquee.classList.remove("show");
-     stopFullVoice();
-     fullCgPlaying.delete(gid);
-     $("status").textContent=screenLocked?`远程锁定 · ${h.name}`:"实时展馆 · 自动轮播";
-   },7000);
- };
- img.onerror=()=>{
-   console.error("满展CG图片读取失败",url);
-   $("status").textContent=`${h.name} · 满展CG图片读取失败`;
-   layer.classList.remove("show");
-   stopFullVoice();
-   resetPlayedFullCG(e);
- };
- img.src=url;
+ const gid=Number(e?.id);if(!gid)return;if(fullCgPlaying.has(gid)||hasPlayedFullCG(e)){console.info("满展CG已播放，本次重复触发已忽略",gid);return}fullCgPlaying.add(gid);markPlayedFullCG(e);
+ const h=e?.hosts,fallbackUrl=String(h?.full_cg_url||"").trim();if(!h){resetPlayedFullCG(e);return}
+ const weeklyCgFiles={"遇见":"yujian.png","空白":"kongbai.png","泽攸":"zeyou.png","青决":"qingjue.png","弋阳":"yiyang.png","防":"fang.png","雾":"wu.png","鲨熠":"shayi.png","祈年":"qinian.png","艾":"ai.png","宸御":"chenyu.png","北北":"beibei.png","辣椒油":"lajiaoyou.png","七百万":"qibaiwan.png"};
+ const weeklyFile=weeklyCgFiles[h.name]||"",weekFolder=String(week?.start_date||"").trim(),weeklyUrl=(weeklyFile&&weekFolder)?`weekly-images/${weekFolder}/${weeklyFile}`:"";
+ if(!weeklyUrl&&!fallbackUrl){$("status").textContent=`${h.name} · 未设置满展CG`;resetPlayedFullCG(e);return}
+ const layer=$("cg"),img=$("cgImg"),marquee=$("cgMarquee"),marqueeText=$("cgMarqueeText");marquee.classList.remove("show");marqueeText.textContent="";const sponsor=await getGallerySponsor(e);$("cgHost").textContent=h.name;clearTimeout(window.__cg);clearTimeout(window.__marquee);layer.classList.remove("show");let triedFallback=false;
+ img.onload=()=>{$("status").textContent=`${h.name} · 满展CG播放中`;playFullVoice(h);if(sponsor){marqueeText.textContent=`✦ ${sponsor}冠名全馆 ✦`;marquee.classList.remove("show");void marquee.offsetWidth;marquee.classList.add("show");window.__marquee=setTimeout(()=>{marquee.classList.remove("show");marqueeText.textContent=""},6250)}requestAnimationFrame(()=>requestAnimationFrame(()=>layer.classList.add("show")));window.__cg=setTimeout(()=>{layer.classList.remove("show");marquee.classList.remove("show");marqueeText.textContent="";stopFullVoice();fullCgPlaying.delete(gid);$("status").textContent=screenLocked?`远程锁定 · ${h.name}`:"实时展馆 · 自动轮播"},7000)};
+ img.onerror=()=>{if(!triedFallback&&fallbackUrl){triedFallback=true;console.warn("本周满展CG不存在，改用Supabase备用图",weeklyUrl);img.src=fallbackUrl;return}console.error("满展CG图片读取失败",weeklyUrl||fallbackUrl);$("status").textContent=`${h.name} · 满展CG图片读取失败`;layer.classList.remove("show");marquee.classList.remove("show");marqueeText.textContent="";stopFullVoice();resetPlayedFullCG(e)};
+ img.src=weeklyUrl||fallbackUrl;
 }
-
 async function applyScreenCommand(cmd){
  if(!cmd)return;
  if(cmd.event_type==="screen_switch"){
