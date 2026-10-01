@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUI ZUAN｜大号送礼监听测试</title>
+<style>
+:root{color-scheme:dark;--bg:#07090d;--panel:#10141b;--line:#303845;--muted:#8e99aa;--text:#f4f7fb}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% -20%,#252c38 0,#0b0e13 38%,#05070a 100%);font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;color:var(--text)}
+.wrap{max-width:1180px;margin:auto;padding:24px}.head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+h1{font-size:22px;margin:0;letter-spacing:.08em}.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.badge{padding:8px 12px;border:1px solid #46505e;border-radius:999px;color:#cbd3df;font-size:12px}
+.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr);gap:16px}
+.card{background:rgba(15,19,26,.92);border:1px solid #252d38;border-radius:18px;padding:16px;box-shadow:0 18px 60px #0008}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+button{background:#eef2f7;color:#0b0e13;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+button.secondary{background:#1b222d;color:#e9eef5;border:1px solid #37414f}button:disabled{opacity:.4;cursor:not-allowed}
+.stage{position:relative;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;border:1px solid #28303b}
+video{width:100%;height:100%;object-fit:contain;background:#000}
+.crop{position:absolute;left:4%;right:4%;bottom:2%;height:25%;border:2px solid #e8edf4;border-radius:10px;box-shadow:0 0 0 9999px #0002;pointer-events:none}
+.crop:before{content:"送礼提示监控区（开播后可调整）";position:absolute;left:8px;top:-28px;background:#0a0d12dd;padding:4px 7px;border-radius:6px;font-size:12px;color:#e8edf4}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.controls label{font-size:12px;color:#aab4c2}.controls input{width:100%}
+.status{display:flex;align-items:center;gap:8px;margin-bottom:12px}.dot{width:9px;height:9px;border-radius:50%;background:#697386}.dot.on{background:#7ee2a8;box-shadow:0 0 12px #7ee2a8}
+.note{font-size:13px;color:#aab4c2;line-height:1.7;background:#0b0e13;border-radius:12px;padding:12px;margin-bottom:12px}
+.log{height:410px;overflow:auto;border:1px solid #252d38;border-radius:12px;background:#080b0f;padding:10px;font-family:Consolas,monospace;font-size:12px}
+.row{padding:9px;border-bottom:1px solid #171d25}.time{color:#7f8a9a}.ok{color:#9ce8b8}.warn{color:#ffd58a}
+canvas{display:none}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.log{height:260px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">大号送礼监听器｜V0.1 安全测试版</div></div><div class="badge">不会写入 Supabase · 不会自动点亮</div></div>
+  <div class="grid">
+    <section class="card">
+      <div class="toolbar">
+        <button id="share">① 分享大号画面</button>
+        <button id="start" disabled>② 开始监听</button>
+        <button id="stop" class="secondary" disabled>停止</button>
+        <button id="shot" class="secondary" disabled>截取监控区</button>
+      </div>
+      <div class="stage" id="stage"><video id="video" autoplay muted playsinline></video><div class="crop" id="crop"></div></div>
+      <div class="controls">
+        <label>监控区高度 <input id="h" type="range" min="10" max="55" value="25"></label>
+        <label>距离底部 <input id="b" type="range" min="0" max="40" value="2"></label>
+      </div>
+      <canvas id="canvas"></canvas>
+    </section>
+    <aside class="card">
+      <div class="status"><span class="dot" id="dot"></span><strong id="status">等待分享画面</strong></div>
+      <div class="note">
+        这一版先验证「浏览器能否稳定取得鲨熠大号画面」和监控区域。<br>
+        浏览器本身没有可靠的离线中文 OCR，所以 V0.1 不假装已经能识字。点击「截取监控区」会下载当前送礼区域图片，之后再接真正的中文识别层。
+      </div>
+      <div class="log" id="log"></div>
+    </aside>
+  </div>
+</div>
+<script>
+const $=s=>document.querySelector(s), video=$("#video"), crop=$("#crop"), log=$("#log"), canvas=$("#canvas");
+let stream=null, timer=null;
+function add(msg,cls=""){const d=document.createElement("div");d.className="row "+cls;d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span>　${msg}`;log.prepend(d)}
+function syncCrop(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"}
+$("#h").oninput=syncCrop; $("#b").oninput=syncCrop; syncCrop();
+$("#share").onclick=async()=>{
+ try{
+  stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});
+  video.srcObject=stream; $("#start").disabled=false; $("#shot").disabled=false;
+  $("#status").textContent="画面已连接"; $("#dot").classList.add("on"); add("已取得分享画面。请选择鲨熠大号管理/直播视窗。","ok");
+  stream.getVideoTracks()[0].onended=()=>stopAll("画面分享已结束");
+ }catch(e){add("未取得画面："+e.message,"warn")}
+};
+function grab(download=false){
+ if(!video.videoWidth)return;
+ const vw=video.videoWidth,vh=video.videoHeight;
+ const hp=+$("#h").value/100,bp=+$("#b").value/100;
+ const sy=Math.max(0,Math.round(vh*(1-bp-hp))), sh=Math.min(vh-sy,Math.round(vh*hp));
+ canvas.width=vw; canvas.height=sh;
+ canvas.getContext("2d").drawImage(video,0,sy,vw,sh,0,0,vw,sh);
+ if(download){
+  const a=document.createElement("a"); a.download="hui_zuan_gift_region_"+Date.now()+".png"; a.href=canvas.toDataURL("image/png"); a.click();
+  add(`已截取监控区 ${vw}×${sh}。`,"ok");
+ }
+}
+$("#shot").onclick=()=>grab(true);
+$("#start").onclick=()=>{
+ if(timer)return; timer=setInterval(()=>grab(false),500);
+ $("#start").disabled=true;$("#stop").disabled=false;$("#status").textContent="监听测试运行中";
+ add("监听测试已启动。目前只取帧，不识字、不写数据库。","ok");
+};
+function stopAll(msg="监听已停止"){
+ if(timer){clearInterval(timer);timer=null}
+ $("#start").disabled=!stream;$("#stop").disabled=true;$("#status").textContent=msg;add(msg);
+}
+$("#stop").onclick=()=>stopAll();
+add("V0.1 已就绪。先点「分享大号画面」。");
+</script>
+</body></html>
