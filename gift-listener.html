@@ -1,107 +1,80 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HUI ZUAN｜大号送礼监听测试</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUI ZUAN｜大号自动点亮监听器 V0.3</title>
 <style>
-:root{color-scheme:dark;--bg:#07090d;--panel:#10141b;--line:#303845;--muted:#8e99aa;--text:#f4f7fb}
-*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% -20%,#252c38 0,#0b0e13 38%,#05070a 100%);font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;color:var(--text)}
-.wrap{max-width:1180px;margin:auto;padding:24px}.head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
-h1{font-size:22px;margin:0;letter-spacing:.08em}.sub{color:var(--muted);font-size:13px;margin-top:6px}
-.badge{padding:8px 12px;border:1px solid #46505e;border-radius:999px;color:#cbd3df;font-size:12px}
-.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr);gap:16px}
-.card{background:rgba(15,19,26,.92);border:1px solid #252d38;border-radius:18px;padding:16px;box-shadow:0 18px 60px #0008}
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-button{background:#eef2f7;color:#0b0e13;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-button.secondary{background:#1b222d;color:#e9eef5;border:1px solid #37414f}button:disabled{opacity:.4;cursor:not-allowed}
-.stage{position:relative;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;border:1px solid #28303b}
-video{width:100%;height:100%;object-fit:contain;background:#000}
-.crop{position:absolute;left:4%;right:4%;bottom:2%;height:25%;border:2px solid #e8edf4;border-radius:10px;box-shadow:0 0 0 9999px #0002;pointer-events:none}
-.crop:before{content:"送礼提示监控区（开播后可调整）";position:absolute;left:8px;top:-28px;background:#0a0d12dd;padding:4px 7px;border-radius:6px;font-size:12px;color:#e8edf4}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.controls label{font-size:12px;color:#aab4c2}.controls input{width:100%}
-.status{display:flex;align-items:center;gap:8px;margin-bottom:12px}.dot{width:9px;height:9px;border-radius:50%;background:#697386}.dot.on{background:#7ee2a8;box-shadow:0 0 12px #7ee2a8}
-.note{font-size:13px;color:#aab4c2;line-height:1.7;background:#0b0e13;border-radius:12px;padding:12px;margin-bottom:12px}
-.log{height:410px;overflow:auto;border:1px solid #252d38;border-radius:12px;background:#080b0f;padding:10px;font-family:Consolas,monospace;font-size:12px}
-.row{padding:9px;border-bottom:1px solid #171d25}.time{color:#7f8a9a}.ok{color:#9ce8b8}.warn{color:#ffd58a}
-canvas{display:none}
-@media(max-width:850px){.grid{grid-template-columns:1fr}.log{height:260px}}
+:root{color-scheme:dark;--bg:#06080b;--p:#10141b;--l:#303947;--t:#f4f7fb;--m:#9aa6b6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -15%,#252d39,#090c11 42%,#050608);font-family:"Microsoft YaHei",sans-serif;color:var(--t)}
+.wrap{max-width:1200px;margin:auto;padding:22px}.head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}
+h1{font-size:21px;margin:0}.sub{color:var(--m);font-size:13px;margin-top:6px}.pill{border:1px solid #46515f;border-radius:99px;padding:7px 11px;font-size:12px}
+.grid{display:grid;grid-template-columns:1.45fr .8fr;gap:16px}.card{background:#0f131aee;border:1px solid #252d38;border-radius:17px;padding:15px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px}button{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}button.secondary{background:#1b222d;color:#eef3f8;border:1px solid #364150}button:disabled{opacity:.4}
+.stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:13px;overflow:hidden}video{width:100%;height:100%;object-fit:contain}
+.crop{position:absolute;left:3%;right:3%;bottom:2%;height:27%;border:2px solid #fff;border-radius:8px;box-shadow:0 0 0 9999px #0003;pointer-events:none}
+.crop:before{content:"OCR 送礼监控区";position:absolute;top:-26px;left:7px;font-size:12px;background:#080b0fcc;padding:3px 6px;border-radius:5px}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.sliders label{font-size:12px;color:#b1bac8}.sliders input{width:100%}
+.status{font-size:13px;line-height:1.65;padding:11px;background:#080b0f;border-radius:10px;margin-bottom:10px}.good{color:#98e8b5}.bad{color:#ffbd8a}.muted{color:#929eae}
+.raw{font-family:Consolas,"Microsoft YaHei";font-size:12px;white-space:pre-wrap;background:#080b0f;border:1px solid #242c37;border-radius:10px;padding:10px;min-height:86px;margin-bottom:10px}
+.log{height:330px;overflow:auto;background:#080b0f;border:1px solid #242c37;border-radius:10px;padding:8px}.entry{padding:9px;border-bottom:1px solid #171d25;font-size:13px}.entry b{color:#fff}.time{color:#748093;font-family:Consolas}
+canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log{height:240px}}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">大号送礼监听器｜V0.2 GitHub Pages 测试版</div></div><div class="badge">不会写入 Supabase · 不会自动点亮</div></div>
-  <div class="grid">
-    <section class="card">
-      <div class="toolbar">
-        <button id="share">① 分享大号画面</button>
-        <button id="start" disabled>② 开始监听</button>
-        <button id="stop" class="secondary" disabled>停止</button>
-        <button id="shot" class="secondary" disabled>截取监控区</button>
-      </div>
-      <div class="stage" id="stage"><video id="video" autoplay muted playsinline></video><div class="crop" id="crop"></div></div>
-      <div class="controls">
-        <label>监控区高度 <input id="h" type="range" min="10" max="55" value="25"></label>
-        <label>距离底部 <input id="b" type="range" min="0" max="40" value="2"></label>
-      </div>
-      <canvas id="canvas"></canvas>
-    </section>
-    <aside class="card">
-      <div class="status"><span class="dot" id="dot"></span><strong id="status">等待分享画面</strong></div>
-      <div class="note">
-        使用条件：Chrome / Edge + HTTPS。请上传到 GitHub Pages 后使用，不要直接双击本机 HTML。<br><br>
-        这一版先验证「浏览器能否稳定取得鲨熠大号画面」和监控区域。<br>
-        浏览器本身没有可靠的离线中文 OCR，所以 V0.1 不假装已经能识字。点击「截取监控区」会下载当前送礼区域图片，之后再接真正的中文识别层。
-      </div>
-      <div class="log" id="log"></div>
-    </aside>
-  </div>
-</div>
-<script>
-const $=s=>document.querySelector(s), video=$("#video"), crop=$("#crop"), log=$("#log"), canvas=$("#canvas");
-let stream=null, timer=null;
-function add(msg,cls=""){const d=document.createElement("div");d.className="row "+cls;d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span>　${msg}`;log.prepend(d)}
-function syncCrop(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"}
-$("#h").oninput=syncCrop; $("#b").oninput=syncCrop; syncCrop();
-$("#share").onclick=async()=>{
- try{
-  stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});
-  video.srcObject=stream; $("#start").disabled=false; $("#shot").disabled=false;
-  $("#status").textContent="画面已连接"; $("#dot").classList.add("on"); add("已取得分享画面。请选择鲨熠大号管理/直播视窗。","ok");
-  stream.getVideoTracks()[0].onended=()=>stopAll("画面分享已结束");
-  }catch(e){
-   const secure = window.isSecureContext;
-   const proto = location.protocol;
-   let hint = "";
-   if(!secure || proto==="file:") hint = "｜请勿直接双击本机 HTML，请上传 GitHub Pages 后用 HTTPS 打开";
-   else if(e.name==="NotAllowedError") hint = "｜可能是未允许屏幕分享，或关闭了选择窗口";
-   else if(e.name==="NotFoundError") hint = "｜浏览器没有找到可分享的画面来源";
-   add(`未取得画面：${e.name || "Error"} ${e.message || ""}${hint}`,"warn");
- }
-};
-function grab(download=false){
- if(!video.videoWidth)return;
- const vw=video.videoWidth,vh=video.videoHeight;
- const hp=+$("#h").value/100,bp=+$("#b").value/100;
- const sy=Math.max(0,Math.round(vh*(1-bp-hp))), sh=Math.min(vh-sy,Math.round(vh*hp));
- canvas.width=vw; canvas.height=sh;
- canvas.getContext("2d").drawImage(video,0,sy,vw,sh,0,0,vw,sh);
- if(download){
-  const a=document.createElement("a"); a.download="hui_zuan_gift_region_"+Date.now()+".png"; a.href=canvas.toDataURL("image/png"); a.click();
-  add(`已截取监控区 ${vw}×${sh}。`,"ok");
- }
+<body><div class="wrap">
+<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.3｜浏览器中文 OCR 测试版</div></div><div class="pill">测试模式 · 不写 Supabase</div></div>
+<div class="grid">
+<section class="card">
+<div class="toolbar"><button id="share">① 分享大号画面</button><button id="ocrInit" class="secondary">② 加载中文识别</button><button id="start" disabled>③ 开始识别</button><button id="stop" class="secondary" disabled>停止</button></div>
+<div class="stage"><video id="video" autoplay muted playsinline></video><div class="crop" id="crop"></div></div>
+<div class="sliders"><label>监控区高度 <input id="h" type="range" min="10" max="55" value="27"></label><label>距离底部 <input id="b" type="range" min="0" max="40" value="2"></label></div>
+<canvas id="canvas"></canvas>
+</section>
+<aside class="card">
+<div class="status" id="status">先分享鲨熠大号画面，再加载中文识别模型。第一次加载会比之后慢。</div>
+<div class="muted" style="font-size:12px;margin:0 0 6px">OCR 原文</div><div class="raw" id="raw">尚未识别</div>
+<div class="muted" style="font-size:12px;margin:0 0 6px">送礼识别记录</div><div class="log" id="log"></div>
+</aside></div></div>
+<script type="module">
+const $=s=>document.querySelector(s), video=$("#video"), canvas=$("#canvas"), crop=$("#crop");
+let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;
+function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
+function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"} $("#h").oninput=sync;$("#b").oninput=sync;sync();
+function add(o){const d=document.createElement("div");d.className="entry";d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}`;$("#log").prepend(d)}
+function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+$("#share").onclick=async()=>{try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});video.srcObject=stream;stat("✓ 大号画面已连接。下一步加载中文识别。","good");checkReady();stream.getVideoTracks()[0].onended=()=>{stream=null;checkReady();stat("画面分享已结束。","bad")}}catch(e){stat("未取得画面："+e.name+" "+e.message,"bad")}};
+$("#ocrInit").onclick=async()=>{const btn=$("#ocrInit");btn.disabled=true;stat("正在加载 PaddleOCR 中文模型… 第一次需要下载模型，请稍候。");try{
+ const mod=await import("https://cdn.jsdelivr.net/npm/@paddleocr/paddleocr-js@0.4.2/+esm");
+ ocr=await mod.PaddleOCR.create({lang:"ch",ocrVersion:"PP-OCRv5",ortOptions:{backend:"wasm",wasmPaths:"https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/"}});
+ stat("✓ 中文 OCR 已就绪。可以开始识别。","good");btn.textContent="✓ 中文识别已加载";checkReady();
+}catch(e){console.error(e);stat("OCR 加载失败："+(e.message||e)+"。如果河南网络无法加载 CDN，我们再把模型改成本地放进 GitHub。","bad");btn.disabled=false}};
+function checkReady(){$("#start").disabled=!(stream&&ocr)}
+function grab(){
+ if(!video.videoWidth)return null; const vw=video.videoWidth,vh=video.videoHeight,hp=+$("#h").value/100,bp=+$("#b").value/100;
+ const sy=Math.max(0,Math.round(vh*(1-bp-hp))),sh=Math.min(vh-sy,Math.round(vh*hp));
+ canvas.width=vw;canvas.height=sh;const x=canvas.getContext("2d");x.drawImage(video,0,sy,vw,sh,0,0,vw,sh);return canvas
 }
-$("#shot").onclick=()=>grab(true);
-$("#start").onclick=()=>{
- if(timer)return; timer=setInterval(()=>grab(false),500);
- $("#start").disabled=true;$("#stop").disabled=false;$("#status").textContent="监听测试运行中";
- add("监听测试已启动。目前只取帧，不识字、不写数据库。","ok");
-};
-function stopAll(msg="监听已停止"){
- if(timer){clearInterval(timer);timer=null}
- $("#start").disabled=!stream;$("#stop").disabled=true;$("#status").textContent=msg;add(msg);
+function normalize(s){return s.replace(/\s+/g," ").replace(/[：:]/g,":").trim()}
+function parseGift(text){
+ const lines=text.split(/\n+/).map(normalize).filter(Boolean);
+ const joined=lines.join(" ");
+ // 兼容：海棠花 送给鲨熠 + 1个 暮光恋人；以及单行「A送给B 1个礼物」
+ let m=joined.match(/(.{1,28}?)\s*送给\s*(.{1,18}?)(?:\s+|$).*?(\d+)\s*个\s*([^\s，,。]{1,24})/);
+ if(m)return {sister:m[1].trim(),host:m[2].trim(),qty:+m[3],gift:m[4].trim()};
+ // 数量可能在前一行
+ const q=joined.match(/(\d+)\s*个\s*([^\s，,。]{1,24})/), sh=joined.match(/(.{1,28}?)\s*送给\s*(.{1,18})(?:\s|$)/);
+ if(q&&sh)return {sister:sh[1].trim(),host:sh[2].trim(),qty:+q[1],gift:q[2].trim()};
+ return null
 }
-$("#stop").onclick=()=>stopAll();
-add("V0.2 已就绪。请通过 GitHub Pages 的 HTTPS 地址打开本页，再点「分享大号画面」。");
-</script>
-</body></html>
+async function tick(){
+ if(busy||!ocr)return;busy=true;
+ try{const c=grab();if(!c)return;const [res]=await ocr.predict(c,{textRecScoreThresh:.45});
+  const text=(res.items||[]).map(x=>x.text).join("\n");$("#raw").textContent=text||"（本帧没有识别到文字）";
+  const g=parseGift(text);if(g){const sig=[g.sister,g.host,g.gift,g.qty].join("|"),now=Date.now();
+   // 仅防止同一字幕停留在连续帧中重复入账；隔 2.8 秒后相同字幕可再次成为新礼物
+   if(sig!==lastSig || now-lastAt>2800){lastSig=sig;lastAt=now;add(g)}
+  }
+ }catch(e){console.error(e);stat("识别发生错误："+(e.message||e),"bad")}finally{busy=false}
+}
+$("#start").onclick=()=>{if(timer)return;timer=setInterval(tick,1200);tick();$("#start").disabled=true;$("#stop").disabled=false;stat("● 正在识别送礼区域｜测试模式，不会点亮展馆。","good")};
+$("#stop").onclick=()=>{clearInterval(timer);timer=null;$("#stop").disabled=true;checkReady();stat("识别已停止。","muted")};
+</script></body></html>
