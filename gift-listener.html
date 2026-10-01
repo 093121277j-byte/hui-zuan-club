@@ -30,7 +30,7 @@ canvas{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">大号送礼监听器｜V0.1 安全测试版</div></div><div class="badge">不会写入 Supabase · 不会自动点亮</div></div>
+  <div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">大号送礼监听器｜V0.2 GitHub Pages 测试版</div></div><div class="badge">不会写入 Supabase · 不会自动点亮</div></div>
   <div class="grid">
     <section class="card">
       <div class="toolbar">
@@ -49,6 +49,7 @@ canvas{display:none}
     <aside class="card">
       <div class="status"><span class="dot" id="dot"></span><strong id="status">等待分享画面</strong></div>
       <div class="note">
+        使用条件：Chrome / Edge + HTTPS。请上传到 GitHub Pages 后使用，不要直接双击本机 HTML。<br><br>
         这一版先验证「浏览器能否稳定取得鲨熠大号画面」和监控区域。<br>
         浏览器本身没有可靠的离线中文 OCR，所以 V0.1 不假装已经能识字。点击「截取监控区」会下载当前送礼区域图片，之后再接真正的中文识别层。
       </div>
@@ -68,7 +69,15 @@ $("#share").onclick=async()=>{
   video.srcObject=stream; $("#start").disabled=false; $("#shot").disabled=false;
   $("#status").textContent="画面已连接"; $("#dot").classList.add("on"); add("已取得分享画面。请选择鲨熠大号管理/直播视窗。","ok");
   stream.getVideoTracks()[0].onended=()=>stopAll("画面分享已结束");
- }catch(e){add("未取得画面："+e.message,"warn")}
+  }catch(e){
+   const secure = window.isSecureContext;
+   const proto = location.protocol;
+   let hint = "";
+   if(!secure || proto==="file:") hint = "｜请勿直接双击本机 HTML，请上传 GitHub Pages 后用 HTTPS 打开";
+   else if(e.name==="NotAllowedError") hint = "｜可能是未允许屏幕分享，或关闭了选择窗口";
+   else if(e.name==="NotFoundError") hint = "｜浏览器没有找到可分享的画面来源";
+   add(`未取得画面：${e.name || "Error"} ${e.message || ""}${hint}`,"warn");
+ }
 };
 function grab(download=false){
  if(!video.videoWidth)return;
@@ -93,6 +102,6 @@ function stopAll(msg="监听已停止"){
  $("#start").disabled=!stream;$("#stop").disabled=true;$("#status").textContent=msg;add(msg);
 }
 $("#stop").onclick=()=>stopAll();
-add("V0.1 已就绪。先点「分享大号画面」。");
+add("V0.2 已就绪。请通过 GitHub Pages 的 HTTPS 地址打开本页，再点「分享大号画面」。");
 </script>
 </body></html>
