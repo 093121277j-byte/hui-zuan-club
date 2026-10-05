@@ -36,7 +36,37 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 </aside></div></div>
 <script type="module">
 const $=s=>document.querySelector(s), video=$("#video"), canvas=$("#canvas"), crop=$("#crop");
-let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;\nconst AUTO_SISTER_KEY="huizuan_auto_add_sister";\nfunction autoAddSister(){return localStorage.getItem(AUTO_SISTER_KEY)!=="0"}
+let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;
+const AUTO_SISTER_KEY="huizuan_auto_add_sister";
+const SB="https://ossaeaswzzfrekguefkh.supabase.co";
+const KEY="sb_publishable_xxEoSgJZGaNrLmJnr1gtng_Xoxnd_Nn";
+const HEAD={apikey:KEY,Authorization:"Bearer "+KEY};
+function autoAddSister(){return localStorage.getItem(AUTO_SISTER_KEY)!=="0"}
+async function sb(path){const r=await fetch(SB+"/rest/v1/"+path,{headers:HEAD});if(!r.ok)throw new Error("Supabase "+r.status+" "+await r.text());return r.json()}
+function eq(v){return encodeURIComponent(v)}
+async function matchGift(g){
+ const out={...g,checks:[],ready:false};
+ const hs=await sb("hosts?select=id,name&is_active=eq.true&name=eq."+eq(g.host)+"&limit=1");
+ if(!hs.length){out.checks.push("✕ 主持未匹配");return out}
+ out.host_id=hs[0].id;out.checks.push("✓ 主持："+hs[0].name);
+ const ss=await sb("sisters?select=id,nickname&is_active=eq.true&nickname=eq."+eq(g.sister)+"&limit=1");
+ if(ss.length){out.sister_id=ss[0].id;out.checks.push("✓ 姐姐："+ss[0].nickname)}
+ else out.checks.push(autoAddSister()?"△ 新姐姐，正式模式将自动建档":"△ 新姐姐，等待人工确认");
+ const ws=await sb("weeks?select=id,week_name,start_date,end_date&is_current=eq.true&is_closed=eq.false&order=start_date.desc&limit=1");
+ if(!ws.length){out.checks.push("✕ 找不到本周");return out}
+ out.week_id=ws[0].id;out.checks.push("✓ 本周："+(ws[0].week_name||ws[0].start_date));
+ const gs=await sb("host_galleries?select=id,gallery_size,is_full&host_id=eq."+out.host_id+"&week_id=eq."+out.week_id+"&order=id.desc&limit=1");
+ if(!gs.length){out.checks.push("✕ 主持本周没有展馆");return out}
+ out.gallery_id=gs[0].id;out.checks.push("✓ 当前展馆："+gs[0].gallery_size+"馆");
+ const items=await sb("gallery_items?select=id,item_name,current_count,target_count&gallery_id=eq."+out.gallery_id+"&order=sort_order.asc");
+ const norm=x=>normalize(x).replace(/[·•]/g,"");
+ const gi=items.find(x=>norm(x.item_name)===norm(g.gift))||items.find(x=>norm(x.item_name).includes(norm(g.gift))||norm(g.gift).includes(norm(x.item_name)));
+ if(!gi){out.checks.push("✕ 礼物未匹配："+g.gift);return out}
+ out.gallery_item_id=gi.id;out.gift=gi.item_name;out.current_count=gi.current_count;out.target_count=gi.target_count;
+ out.checks.push("✓ 礼物："+gi.item_name+" "+gi.current_count+"/"+gi.target_count);
+ out.checks.push("→ 预计 +"+g.qty+"，测试模式尚未写入");
+ out.ready=!!out.sister_id || autoAddSister();return out
+}
 function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
 function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"} $("#h").oninput=sync;$("#b").oninput=sync;sync();
 function add(o){const d=document.createElement("div");d.className="entry";const checks=(o.checks||[]).map(x=>esc(x)).join("<br>");d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}<br><span class="muted">${checks}</span>`;$("#log").prepend(d)}
