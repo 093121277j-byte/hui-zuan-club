@@ -21,7 +21,7 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 </style>
 </head>
 <body><div class="wrap">
-<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.4｜12人名称校正 · 模拟点亮</div></div><div class="pill">模拟模式 · 不写正式展馆</div></div>
+<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.5｜12人名称校正 · 新姐姐自动建档开关</div></div><div class="pill">识别模式 · 新姐姐规则由控制台决定</div></div>
 <div class="grid">
 <section class="card">
 <div class="toolbar"><button id="share">① 分享大号画面</button><button id="ocrInit" class="secondary">② 加载中文识别</button><button id="start" disabled>③ 开始识别</button><button id="stop" class="secondary" disabled>停止</button></div>
@@ -36,10 +36,10 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 </aside></div></div>
 <script type="module">
 const $=s=>document.querySelector(s), video=$("#video"), canvas=$("#canvas"), crop=$("#crop");
-let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;
+let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;\nconst AUTO_SISTER_KEY="huizuan_auto_add_sister";\nfunction autoAddSister(){return localStorage.getItem(AUTO_SISTER_KEY)!=="0"}
 function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
 function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"} $("#h").oninput=sync;$("#b").oninput=sync;sync();
-function add(o){const d=document.createElement("div");d.className="entry";d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}`;$("#log").prepend(d)}
+function add(o){const d=document.createElement("div");d.className="entry";d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}<br><span class="muted">新姐姐：${autoAddSister()?"自动增加":"不自动增加，等待人工确认"}</span>`;$("#log").prepend(d)}
 function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
 $("#share").onclick=async()=>{try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});video.srcObject=stream;stat("✓ 大号画面已连接。下一步加载中文识别。","good");checkReady();stream.getVideoTracks()[0].onended=()=>{stream=null;checkReady();stat("画面分享已结束。","bad")}}catch(e){stat("未取得画面："+e.name+" "+e.message,"bad")}};
 $("#ocrInit").onclick=async()=>{const btn=$("#ocrInit");btn.disabled=true;stat("正在加载 PaddleOCR 中文模型… 第一次需要下载模型，请稍候。");try{
