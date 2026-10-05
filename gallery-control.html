@@ -135,8 +135,9 @@ function updateOperation(){
 }
 
 async function loadHosts(){
+ const ACTIVE_HOSTS=new Set(["空白","青决","弋阳","防","雾","鲨熠","祈年","艾","宸御","北北","辣椒油","宋焱"]);
  const r=await db.from("hosts").select("*").eq("is_active",true).order("sort_order");
- if(r.error)throw r.error;hosts=r.data||[];
+ if(r.error)throw r.error;hosts=(r.data||[]).filter(x=>ACTIVE_HOSTS.has(x.name));
  $("host").innerHTML=hosts.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
 }
 async function loadWeeks(){
