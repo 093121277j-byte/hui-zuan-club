@@ -361,6 +361,7 @@ input:focus {
 .audition-panel{margin-top:18px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025);display:none}.audition-panel.show{display:block}.audition-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.audition-grid button{padding:12px 6px}.audition-grid button.has-voice{border-color:rgba(235,245,255,.48);box-shadow:0 0 14px rgba(220,235,255,.08)}.audition-actions{display:flex;gap:8px;margin-top:12px}@media(max-width:800px){.audition-grid{grid-template-columns:repeat(2,1fr)}}
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -743,11 +744,16 @@ input:focus {
    歌手
 ========================================================= */
 
-const singers = {
-    "空白":"images/kongbai.png","青决":"images/qingjue.png","弋阳":"images/yiyang.png","防":"images/fang.png",
-    "雾":"images/wu.png","鲨熠":"images/shayi.png","祈年":"images/qinian.png","艾":"images/ai.png",
-    "宸御":"images/jinxun.png","北北":"images/beibei.png","辣椒油":"images/lajiaoyou.png","宋焱":"images/songyan.png"
-};
+let singers = {};
+const ACTIVE_HOSTS=["空白","青决","弋阳","防","雾","鲨熠","祈年","艾","宸御","北北","辣椒油","宋焱"];
+const hzDb=supabase.createClient("https://ossaeaswzzfrekguefkh.supabase.co","sb_publishable_xxEoSgJZGaNrLmJnr1gtng_Xoxnd_Nn");
+async function loadSingersFromSupabase(){
+ const {data,error}=await hzDb.from("hosts").select("name,avatar_url,sort_order").eq("is_active",true).in("name",ACTIVE_HOSTS).order("sort_order");
+ if(error)throw error;
+ singers=Object.fromEntries((data||[]).map(h=>[h.name,h.avatar_url||""]));
+ selectedCharacter=singers[selectedSinger]||"";
+ createSingerButtons();createAuditionButtons();updateControl();
+}
 
 
 /* =========================================================
@@ -2337,10 +2343,7 @@ function endAudition(){saveData({mode:"waiting",singer:"鲨熠",song:"",requeste
    START
 ========================================================= */
 
-createSingerButtons();
-createAuditionButtons();
-
-updateControl();
+loadSingersFromSupabase().catch(e=>{console.error(e);alert("主持人物读取失败："+e.message)});
 
 renderHistory();
 
