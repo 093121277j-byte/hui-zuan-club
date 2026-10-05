@@ -2512,6 +2512,7 @@ body.level3 .stage-name,body.level3 .singer,body.level3 .heart { text-shadow:0 0
 .member-feiye,.member-zeyou{display:none!important}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 
@@ -4403,6 +4404,22 @@ body {
  function apply(){const order=load();order.forEach((cls,i)=>{const el=document.querySelector('.waiting .'+cls);if(!el||!slots[i])return;const q=slots[i];el.style.left=q.left;el.style.width=q.width;el.style.height=q.height;el.style.zIndex=q.z;const img=el.querySelector('img');if(img){if(i===5){img.style.filter='brightness(1.02) drop-shadow(0 0 30px rgba(235,245,255,.28))';}else{img.style.removeProperty('filter');}}});}
  window.addEventListener('storage',e=>{if(e.key===KEY)apply()});
  document.addEventListener('DOMContentLoaded',apply); apply();
+})();
+</script>
+
+<script>
+/* Supabase 人物图同步：待机与演唱人物统一读取 hosts.avatar_url */
+(async function(){
+ const ACTIVE_HOSTS=["空白","青决","弋阳","防","雾","鲨熠","祈年","艾","宸御","北北","辣椒油","宋焱"];
+ const CLASS_BY_NAME={"空白":"member-kongbai","青决":"member-qingjue","弋阳":"member-yiyang","防":"member-fang","雾":"member-wu","鲨熠":"member-shayi","祈年":"member-qinian","艾":"member-ai","宸御":"member-jinxun","北北":"member-beibei","辣椒油":"member-lajiaoyou","宋焱":"member-songyan"};
+ try{
+  const db=supabase.createClient("https://ossaeaswzzfrekguefkh.supabase.co","sb_publishable_xxEoSgJZGaNrLmJnr1gtng_Xoxnd_Nn");
+  const {data,error}=await db.from("hosts").select("name,avatar_url").eq("is_active",true).in("name",ACTIVE_HOSTS);
+  if(error)throw error;
+  const map=Object.fromEntries((data||[]).map(h=>[h.name,h.avatar_url||""]));
+  for(const [name,cls] of Object.entries(CLASS_BY_NAME)){const img=document.querySelector(".waiting ."+cls+" img");if(img&&map[name])img.src=map[name]}
+  window.HZ_HOST_AVATARS=map;
+ }catch(e){console.error("Supabase人物图读取失败",e)}
 })();
 </script>
 </body>
