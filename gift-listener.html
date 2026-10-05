@@ -21,7 +21,7 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 </style>
 </head>
 <body><div class="wrap">
-<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.3｜浏览器中文 OCR 测试版</div></div><div class="pill">测试模式 · 不写 Supabase</div></div>
+<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.4｜12人名称校正 · 模拟点亮</div></div><div class="pill">模拟模式 · 不写正式展馆</div></div>
 <div class="grid">
 <section class="card">
 <div class="toolbar"><button id="share">① 分享大号画面</button><button id="ocrInit" class="secondary">② 加载中文识别</button><button id="start" disabled>③ 开始识别</button><button id="stop" class="secondary" disabled>停止</button></div>
@@ -54,15 +54,19 @@ function grab(){
  canvas.width=vw;canvas.height=sh;const x=canvas.getContext("2d");x.drawImage(video,0,sy,vw,sh,0,0,vw,sh);return canvas
 }
 function normalize(s){return s.replace(/\s+/g," ").replace(/[：:]/g,":").trim()}
+const HOSTS=["空白","青决","弋阳","防","雾","鲨熠","祈年","艾","宸御","北北","辣椒油","宋焱"];
+const HOST_ALIASES={"鲨翌":"鲨熠","青诀":"青决"};
+function correctHost(raw){const t=normalize(raw);if(HOST_ALIASES[t])return HOST_ALIASES[t];const exact=HOSTS.find(x=>t===x||t.includes(x)||x.includes(t));return exact||t}
+
 function parseGift(text){
  const lines=text.split(/\n+/).map(normalize).filter(Boolean);
  const joined=lines.join(" ");
  // 兼容：海棠花 送给鲨熠 + 1个 暮光恋人；以及单行「A送给B 1个礼物」
  let m=joined.match(/(.{1,28}?)\s*送给\s*(.{1,18}?)(?:\s+|$).*?(\d+)\s*个\s*([^\s，,。]{1,24})/);
- if(m)return {sister:m[1].trim(),host:m[2].trim(),qty:+m[3],gift:m[4].trim()};
+ if(m)return {sister:m[1].trim(),host:correctHost(m[2].trim()),qty:+m[3],gift:m[4].trim()};
  // 数量可能在前一行
  const q=joined.match(/(\d+)\s*个\s*([^\s，,。]{1,24})/), sh=joined.match(/(.{1,28}?)\s*送给\s*(.{1,18})(?:\s|$)/);
- if(q&&sh)return {sister:sh[1].trim(),host:sh[2].trim(),qty:+q[1],gift:q[2].trim()};
+ if(q&&sh)return {sister:sh[1].trim(),host:correctHost(sh[2].trim()),qty:+q[1],gift:q[2].trim()};
  return null
 }
 async function tick(){
