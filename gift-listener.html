@@ -11,7 +11,7 @@ h1{font-size:21px;margin:0}.sub{color:var(--m);font-size:13px;margin-top:6px}.pi
 .grid{display:grid;grid-template-columns:1.45fr .8fr;gap:16px}.card{background:#0f131aee;border:1px solid #252d38;border-radius:17px;padding:15px}
 .toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px}button{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}button.secondary{background:#1b222d;color:#eef3f8;border:1px solid #364150}button:disabled{opacity:.4}
 .stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:13px;overflow:hidden}video{width:100%;height:100%;object-fit:contain}
-.crop{position:absolute;left:3%;right:3%;bottom:2%;height:27%;border:2px solid #fff;border-radius:8px;box-shadow:0 0 0 9999px #0003;pointer-events:none}
+.crop{position:absolute;left:3%;right:45%;bottom:2%;height:27%;border:2px solid #fff;border-radius:8px;box-shadow:0 0 0 9999px #0003;pointer-events:none}
 .crop:before{content:"OCR 送礼监控区";position:absolute;top:-26px;left:7px;font-size:12px;background:#080b0fcc;padding:3px 6px;border-radius:5px}
 .sliders{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.sliders label{font-size:12px;color:#b1bac8}.sliders input{width:100%}
 .status{font-size:13px;line-height:1.65;padding:11px;background:#080b0f;border-radius:10px;margin-bottom:10px}.good{color:#98e8b5}.bad{color:#ffbd8a}.muted{color:#929eae}
@@ -21,12 +21,12 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 </style>
 </head>
 <body><div class="wrap">
-<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.6｜Supabase 匹配测试 · 不写正式展馆</div></div><div class="pill">匹配测试 · 不增加展馆数量</div></div>
+<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.7｜送给锚点 · 四边监控框 · Supabase 匹配测试</div></div><div class="pill">匹配测试 · 不增加展馆数量</div></div>
 <div class="grid">
 <section class="card">
 <div class="toolbar"><button id="share">① 分享大号画面</button><button id="ocrInit" class="secondary">② 加载中文识别</button><button id="start" disabled>③ 开始识别</button><button id="stop" class="secondary" disabled>停止</button></div>
 <div class="stage"><video id="video" autoplay muted playsinline></video><div class="crop" id="crop"></div></div>
-<div class="sliders"><label>监控区高度 <input id="h" type="range" min="10" max="55" value="27"></label><label>距离底部 <input id="b" type="range" min="0" max="40" value="2"></label></div>
+<div class="sliders"><label>监控区高度 <input id="h" type="range" min="8" max="70" value="27"></label><label>距离底部 <input id="b" type="range" min="0" max="70" value="2"></label><label>距离左侧 <input id="l" type="range" min="0" max="80" value="3"></label><label>距离右侧 <input id="r" type="range" min="0" max="80" value="45"></label></div>
 <canvas id="canvas"></canvas>
 </section>
 <aside class="card">
@@ -68,7 +68,7 @@ async function matchGift(g){
  out.ready=!!out.sister_id || autoAddSister();return out
 }
 function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
-function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%"} $("#h").oninput=sync;$("#b").oninput=sync;sync();
+function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%";crop.style.left=$("#l").value+"%";crop.style.right=$("#r").value+"%"} ["#h","#b","#l","#r"].forEach(id=>$(id).oninput=sync);sync();
 function add(o){const d=document.createElement("div");d.className="entry";const checks=(o.checks||[]).map(x=>esc(x)).join("<br>");d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}<br><span class="muted">${checks}</span>`;$("#log").prepend(d)}
 function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
 $("#share").onclick=async()=>{try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});video.srcObject=stream;stat("✓ 大号画面已连接。下一步加载中文识别。","good");checkReady();stream.getVideoTracks()[0].onended=()=>{stream=null;checkReady();stat("画面分享已结束。","bad")}}catch(e){stat("未取得画面："+e.name+" "+e.message,"bad")}};
@@ -80,8 +80,10 @@ $("#ocrInit").onclick=async()=>{const btn=$("#ocrInit");btn.disabled=true;stat("
 function checkReady(){$("#start").disabled=!(stream&&ocr)}
 function grab(){
  if(!video.videoWidth)return null; const vw=video.videoWidth,vh=video.videoHeight,hp=+$("#h").value/100,bp=+$("#b").value/100;
+ const lp=+$("#l").value/100,rp=+$("#r").value/100;
+ const sx=Math.max(0,Math.round(vw*lp)),sw=Math.max(1,Math.round(vw*(1-lp-rp)));
  const sy=Math.max(0,Math.round(vh*(1-bp-hp))),sh=Math.min(vh-sy,Math.round(vh*hp));
- canvas.width=vw;canvas.height=sh;const x=canvas.getContext("2d");x.drawImage(video,0,sy,vw,sh,0,0,vw,sh);return canvas
+ canvas.width=sw;canvas.height=sh;const x=canvas.getContext("2d");x.drawImage(video,sx,sy,sw,sh,0,0,sw,sh);return canvas
 }
 function normalize(s){return s.replace(/\s+/g," ").replace(/[：:]/g,":").trim()}
 const HOSTS=["空白","青决","弋阳","防","雾","鲨熠","祈年","艾","宸御","北北","辣椒油","宋焱"];
@@ -90,8 +92,11 @@ function correctHost(raw){const t=normalize(raw);if(HOST_ALIASES[t])return HOST_
 
 function parseGift(text){
  const lines=text.split(/\n+/).map(normalize).filter(Boolean);
- const joined=lines.join(" ");
- // 兼容：海棠花 送给鲨熠 + 1个 暮光恋人；以及单行「A送给B 1个礼物」
+ const anchor=lines.findIndex(x=>x.includes("送给"));
+ if(anchor<0)return null;
+ const nearby=lines.slice(Math.max(0,anchor-1),Math.min(lines.length,anchor+4));
+ const joined=nearby.join(" ");
+ // 「送给」是硬锚点：只解析它附近的姐姐、主持、数量和礼物，其余 OCR 杂讯忽略
  let m=joined.match(/(.{1,28}?)\s*送给\s*(.{1,18}?)(?:\s+|$).*?(\d+)\s*个\s*([^\s，,。]{1,24})/);
  if(m)return {sister:m[1].trim(),host:correctHost(m[2].trim()),qty:+m[3],gift:m[4].trim()};
  // 数量可能在前一行
