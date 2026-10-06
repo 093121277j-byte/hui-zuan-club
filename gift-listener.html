@@ -16,12 +16,12 @@ h1{font-size:21px;margin:0}.sub{color:var(--m);font-size:13px;margin-top:6px}.pi
 .sliders{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.sliders label{font-size:12px;color:#b1bac8}.sliders input{width:100%}
 .status{font-size:13px;line-height:1.65;padding:11px;background:#080b0f;border-radius:10px;margin-bottom:10px}.good{color:#98e8b5}.bad{color:#ffbd8a}.muted{color:#929eae}
 .raw{font-family:Consolas,"Microsoft YaHei";font-size:12px;white-space:pre-wrap;background:#080b0f;border:1px solid #242c37;border-radius:10px;padding:10px;min-height:86px;margin-bottom:10px}
-.log{height:330px;overflow:auto;background:#080b0f;border:1px solid #242c37;border-radius:10px;padding:8px}.entry{padding:9px;border-bottom:1px solid #171d25;font-size:13px}.entry b{color:#fff}.time{color:#748093;font-family:Consolas}
+.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:999}.modal.show{display:grid}.dialog{width:min(520px,92vw);max-height:80vh;overflow:auto;background:#111720;border:1px solid #3b4655;border-radius:16px;padding:18px}.dialog h3{margin:0 0 12px}.choices{display:grid;gap:8px}.choices button{text-align:left;background:#1a2230;color:#fff;border:1px solid #394657}.dialog .row{display:flex;gap:8px;margin-top:12px}.dialog select{width:100%;padding:10px;background:#0b1017;color:#fff;border:1px solid #394657;border-radius:9px}.log{height:330px;overflow:auto;background:#080b0f;border:1px solid #242c37;border-radius:10px;padding:8px}.entry{padding:9px;border-bottom:1px solid #171d25;font-size:13px}.entry b{color:#fff}.time{color:#748093;font-family:Consolas}
 canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log{height:240px}}
 </style>
 </head>
 <body><div class="wrap">
-<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.7｜送给锚点 · 四边监控框 · Supabase 匹配测试</div></div><div class="pill">匹配测试 · 不增加展馆数量</div></div>
+<div class="head"><div><h1>HUI ZUAN · BIG ACCOUNT LISTENER</h1><div class="sub">V0.8｜正式自动点亮 · 姐姐身份确认</div></div><div class="pill">正式模式 · 自动写入展馆</div></div>
 <div class="grid">
 <section class="card">
 <div class="toolbar"><button id="share">① 分享大号画面</button><button id="ocrInit" class="secondary">② 加载中文识别</button><button id="start" disabled>③ 开始识别</button><button id="stop" class="secondary" disabled>停止</button></div>
@@ -34,6 +34,7 @@ canvas{display:none}@media(max-width:850px){.grid{grid-template-columns:1fr}.log
 <div class="muted" style="font-size:12px;margin:0 0 6px">OCR 原文</div><div class="raw" id="raw">尚未识别</div>
 <div class="muted" style="font-size:12px;margin:0 0 6px">送礼识别记录</div><div class="log" id="log"></div>
 </aside></div></div>
+<div class="modal" id="sisterModal"><div class="dialog"><h3 id="sisterTitle">发现未识别姐姐</h3><div id="sisterStep"></div></div></div>
 <script type="module">
 const $=s=>document.querySelector(s), video=$("#video"), canvas=$("#canvas"), crop=$("#crop");
 let stream=null,ocr=null,timer=null,busy=false,lastSig="",lastAt=0;
@@ -44,6 +45,23 @@ const HEAD={apikey:KEY,Authorization:"Bearer "+KEY};
 function autoAddSister(){return localStorage.getItem(AUTO_SISTER_KEY)!=="0"}
 async function sb(path){const r=await fetch(SB+"/rest/v1/"+path,{headers:HEAD});if(!r.ok)throw new Error("Supabase "+r.status+" "+await r.text());return r.json()}
 function eq(v){return encodeURIComponent(v)}
+async function rpc(name,body){const r=await fetch(SB+"/rest/v1/rpc/"+name,{method:"POST",headers:{...HEAD,"Content-Type":"application/json"},body:JSON.stringify(body)});if(!r.ok)throw new Error(name+" "+r.status+" "+await r.text());const t=await r.text();try{return JSON.parse(t)}catch{return t}}
+let sisterResolver=null;
+function closeSisterModal(v){$("#sisterModal").classList.remove("show");if(sisterResolver){const r=sisterResolver;sisterResolver=null;r(v)}}
+async function resolveUnknownSister(nickname){
+ const all=await sb("sisters?select=id,nickname&is_active=eq.true&order=nickname.asc");
+ return new Promise(resolve=>{
+  sisterResolver=resolve;$("#sisterModal").classList.add("show");$("#sisterTitle").textContent="发现「"+nickname+"」，是否为旧姐姐？";
+  $("#sisterStep").innerHTML='<div class="row"><button id="oldYes">是，选择旧姐姐</button><button id="oldNo" class="secondary">否</button></div>';
+  $("#oldYes").onclick=()=>{$("#sisterStep").innerHTML='<select id="oldList"><option value="">请选择以往姐姐</option>'+all.map(x=>'<option value="'+x.id+'">'+esc(x.nickname)+'</option>').join("")+'</select><div class="row"><button id="oldOk">确认绑定</button><button id="oldBack" class="secondary">返回</button></div>';$("#oldOk").onclick=()=>{const id=+$("#oldList").value;if(!id)return;const s=all.find(x=>x.id===id);closeSisterModal(s)};$("#oldBack").onclick=()=>closeSisterModal(null)};
+  $("#oldNo").onclick=()=>{$("#sisterTitle").textContent="是否新增姐姐「"+nickname+"」？";$("#sisterStep").innerHTML='<div class="row"><button id="newYes">是，新增姐姐</button><button id="newNo" class="secondary">否，跳过这笔</button></div>';$("#newYes").onclick=async()=>{try{await rpc("add_sister",{p_name:nickname});const rows=await sb("sisters?select=id,nickname&is_active=eq.true&nickname=eq."+eq(nickname)+"&order=id.desc&limit=1");closeSisterModal(rows[0]||null)}catch(e){stat("新增姐姐失败："+e.message,"bad")}};$("#newNo").onclick=()=>closeSisterModal(null)};
+ });
+}
+async function postGift(out){
+ if(!out.sister_id){const chosen=await resolveUnknownSister(out.sister);if(!chosen){out.checks.push("⊘ 姐姐未确认，本笔未入账");return out}out.sister_id=chosen.id;out.checks.push("✓ 使用姐姐："+chosen.nickname)}
+ for(let i=0;i<out.qty;i++)await rpc("light_gallery_item",{p_gallery_item_id:out.gallery_item_id,p_sister_id:out.sister_id});
+ out.checks.push("✓ 已正式入账 +"+out.qty);out.written=true;return out
+}
 async function matchGift(g){
  const out={...g,checks:[],ready:false};
  const hs=await sb("hosts?select=id,name&is_active=eq.true&name=eq."+eq(g.host)+"&limit=1");
@@ -64,8 +82,7 @@ async function matchGift(g){
  if(!gi){out.checks.push("✕ 礼物未匹配："+g.gift);return out}
  out.gallery_item_id=gi.id;out.gift=gi.item_name;out.current_count=gi.current_count;out.target_count=gi.target_count;
  out.checks.push("✓ 礼物："+gi.item_name+" "+gi.current_count+"/"+gi.target_count);
- out.checks.push("→ 预计 +"+g.qty+"，测试模式尚未写入");
- out.ready=!!out.sister_id || autoAddSister();return out
+ out.checks.push("→ 准备正式入账 +"+g.qty);\n out.ready=true;return out
 }
 function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
 function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%";crop.style.left=$("#l").value+"%";crop.style.right=$("#r").value+"%"} ["#h","#b","#l","#r"].forEach(id=>$(id).oninput=sync);sync();
@@ -110,10 +127,10 @@ async function tick(){
   const text=(res.items||[]).map(x=>x.text).join("\n");$("#raw").textContent=text||"（本帧没有识别到文字）";
   const g=parseGift(text);if(g){const sig=[g.sister,g.host,g.gift,g.qty].join("|"),now=Date.now();
    // 仅防止同一字幕停留在连续帧中重复入账；隔 2.8 秒后相同字幕可再次成为新礼物
-   if(sig!==lastSig || now-lastAt>2800){lastSig=sig;lastAt=now;const matched=await matchGift(g);add(matched)}
+   if(sig!==lastSig || now-lastAt>2800){lastSig=sig;lastAt=now;let matched=await matchGift(g);if(matched.ready)matched=await postGift(matched);add(matched)}
   }
  }catch(e){console.error(e);stat("识别发生错误："+(e.message||e),"bad")}finally{busy=false}
 }
-$("#start").onclick=()=>{if(timer)return;timer=setInterval(tick,1200);tick();$("#start").disabled=true;$("#stop").disabled=false;stat("● 正在识别并匹配 Supabase｜测试模式，不会修改展馆数量。","good")};
+$("#start").onclick=()=>{if(timer)return;timer=setInterval(tick,1200);tick();$("#start").disabled=true;$("#stop").disabled=false;stat("● 正在识别并自动写入 Supabase 展馆。陌生姐姐会先要求确认身份。","good")};
 $("#stop").onclick=()=>{clearInterval(timer);timer=null;$("#stop").disabled=true;checkReady();stat("识别已停止。","muted")};
 </script></body></html>
