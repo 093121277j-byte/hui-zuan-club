@@ -89,7 +89,7 @@ function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textCont
 function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%";crop.style.left=$("#l").value+"%";crop.style.right=$("#r").value+"%"} ["#h","#b","#l","#r"].forEach(id=>$(id).oninput=sync);sync();
 function add(o){const d=document.createElement("div");d.className="entry";const checks=(o.checks||[]).map(x=>esc(x)).join("<br>");d.innerHTML=`<span class="time">${new Date().toLocaleTimeString()}</span><br><b>${esc(o.sister)}</b> → <b>${esc(o.host)}</b><br>${esc(o.gift)} × ${o.qty}<br><span class="muted">${checks}</span>`;$("#log").prepend(d)}
 function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
-$("#share").onclick=async()=>{try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});video.srcObject=stream;stat("✓ 大号画面已连接。下一步加载中文识别。","good");checkReady();stream.getVideoTracks()[0].onended=()=>{stream=null;checkReady();stat("画面分享已结束。","bad")}}catch(e){stat("未取得画面："+e.name+" "+e.message,"bad")}};
+$("#share").onclick=async()=>{try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:10,max:15}},audio:false});video.srcObject=stream;stat("✓ 大号画面已连接。下一步加载中文识别。","good");checkReady();stream.getVideoTracks()[0].onended=()=>{window.__HUIZUAN_MONITOR_RUNNING__=false;stream=null;checkReady();stat("画面分享已结束。","bad")}}catch(e){stat("未取得画面："+e.name+" "+e.message,"bad")}};
 $("#ocrInit").onclick=async()=>{const btn=$("#ocrInit");btn.disabled=true;stat("正在加载 PaddleOCR 中文模型… 第一次需要下载模型，请稍候。");try{
  const mod=await import("https://cdn.jsdelivr.net/npm/@paddleocr/paddleocr-js@0.4.2/+esm");
  ocr=await mod.PaddleOCR.create({lang:"ch",ocrVersion:"PP-OCRv5",ortOptions:{backend:"wasm",wasmPaths:"https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/"}});
@@ -132,6 +132,6 @@ async function tick(){
   }
  }catch(e){console.error(e);stat("识别发生错误："+(e.message||e),"bad")}finally{busy=false}
 }
-$("#start").onclick=()=>{if(timer)return;timer=setInterval(tick,1200);tick();$("#start").disabled=true;$("#stop").disabled=false;stat("● 正在识别并自动写入 Supabase 展馆。陌生姐姐会先要求确认身份。","good")};
-$("#stop").onclick=()=>{clearInterval(timer);timer=null;$("#stop").disabled=true;checkReady();stat("识别已停止。","muted")};
+$("#start").onclick=()=>{if(timer)return;window.__HUIZUAN_MONITOR_RUNNING__=true;timer=setInterval(tick,1200);tick();$("#start").disabled=true;$("#stop").disabled=false;stat("● 正在识别并自动写入 Supabase 展馆。陌生姐姐会先要求确认身份。","good")};
+$("#stop").onclick=()=>{window.__HUIZUAN_MONITOR_RUNNING__=false;clearInterval(timer);timer=null;$("#stop").disabled=true;checkReady();stat("识别已停止。","muted")};
 </script></body></html>
