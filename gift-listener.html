@@ -82,7 +82,8 @@ async function matchGift(g){
  if(!gi){out.checks.push("✕ 礼物未匹配："+g.gift);return out}
  out.gallery_item_id=gi.id;out.gift=gi.item_name;out.current_count=gi.current_count;out.target_count=gi.target_count;
  out.checks.push("✓ 礼物："+gi.item_name+" "+gi.current_count+"/"+gi.target_count);
- out.checks.push("→ 准备正式入账 +"+g.qty);\n out.ready=true;return out
+ out.checks.push("→ 准备正式入账 +"+g.qty);
+ out.ready=true;return out
 }
 function stat(s,c=""){const el=$("#status");el.className="status "+c;el.textContent=s}
 function sync(){crop.style.height=$("#h").value+"%";crop.style.bottom=$("#b").value+"%";crop.style.left=$("#l").value+"%";crop.style.right=$("#r").value+"%"} ["#h","#b","#l","#r"].forEach(id=>$(id).oninput=sync);sync();
