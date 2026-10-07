@@ -59,8 +59,23 @@ async function resolveUnknownSister(nickname){
 }
 async function postGift(out){
  if(!out.sister_id){const chosen=await resolveUnknownSister(out.sister);if(!chosen){out.checks.push("⊘ 姐姐未确认，本笔未入账");return out}out.sister_id=chosen.id;out.checks.push("✓ 使用姐姐："+chosen.nickname)}
+ // 入账前先记录整馆状态。只有真正从“未满”跨到“满展”时才发一次满展事件。
+ const beforeItems=await sb("gallery_items?select=id,current_count,target_count&gallery_id=eq."+out.gallery_id);
+ const wasFull=beforeItems.length>0&&beforeItems.every(x=>Number(x.current_count)>=Number(x.target_count));
  for(let i=0;i<out.qty;i++)await rpc("light_gallery_item",{p_gallery_item_id:out.gallery_item_id,p_sister_id:out.sister_id});
- out.checks.push("✓ 已正式入账 +"+out.qty);out.written=true;return out
+ out.checks.push("✓ 已正式入账 +"+out.qty);out.written=true;
+ const afterItems=await sb("gallery_items?select=id,current_count,target_count&gallery_id=eq."+out.gallery_id);
+ const isFull=afterItems.length>0&&afterItems.every(x=>Number(x.current_count)>=Number(x.target_count));
+ if(!wasFull&&isFull){
+  try{
+   await rpc("push_screen_event",{p_host_id:out.host_id,p_gallery_id:out.gallery_id,p_gallery_item_id:out.gallery_item_id,p_sister_id:out.sister_id,p_event_type:"gallery_full",p_message:"自动送礼达成满展"});
+   out.checks.push("✦ 已触发满展贺图");
+  }catch(e){
+   console.error("满展事件发送失败",e);
+   out.checks.push("⚠ 已满展，但贺图事件发送失败");
+  }
+ }
+ return out
 }
 async function matchGift(g){
  const out={...g,checks:[],ready:false};
